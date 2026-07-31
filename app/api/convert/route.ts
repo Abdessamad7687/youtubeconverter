@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       download: {
         url: converted.url,
         filename: converted.filename || safeFilename(media.title, body.format),
-        note: `${body.format.toUpperCase()} export`,
+        note: `Fichier ${body.format.toUpperCase()} prêt`,
       },
     });
   } catch (caught) {

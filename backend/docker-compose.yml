@@ -1,0 +1,18 @@
+services:
+  totube-converter:
+    build: .
+    restart: unless-stopped
+    init: true
+    ports:
+      - "8788:8788"
+    environment:
+      CONVERTER_API_KEY: ${CONVERTER_API_KEY:?Set CONVERTER_API_KEY}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8788}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-*}
+      MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-1200}
+      MAX_FILESIZE: ${MAX_FILESIZE:-500M}
+      FILE_TTL_MINUTES: ${FILE_TTL_MINUTES:-30}
+      MAX_CONCURRENT_JOBS: ${MAX_CONCURRENT_JOBS:-2}
+      RATE_LIMIT_PER_HOUR: ${RATE_LIMIT_PER_HOUR:-12}
+    tmpfs:
+      - /var/tmp/totube:size=2G,mode=1777
