@@ -15,6 +15,8 @@ RUN useradd --create-home --uid 10001 totube \
 USER totube
 ENV PORT=8788 \
     WORK_DIR=/var/tmp/totube \
+    FFMPEG_BIN=ffmpeg \
+    FFPROBE_BIN=ffprobe \
     MAX_DURATION_SECONDS=1200 \
     MAX_FILESIZE=500M \
     FILE_TTL_MINUTES=30 \

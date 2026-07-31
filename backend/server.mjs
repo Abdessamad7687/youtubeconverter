@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import { createReadStream, existsSync } from "node:fs";
-import { mkdir, readdir, rm, stat } from "node:fs/promises";
+import { mkdir, readdir, rename, rm, stat } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import { basename, extname, join, resolve } from "node:path";
@@ -12,6 +12,8 @@ const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "*";
 const WORK_ROOT = resolve(process.env.WORK_DIR || join(tmpdir(), "totube-converter"));
 const YTDLP_BIN = process.env.YTDLP_BIN || "yt-dlp";
+const FFMPEG_BIN = process.env.FFMPEG_BIN || "ffmpeg";
+const FFPROBE_BIN = process.env.FFPROBE_BIN || "ffprobe";
 const MAX_DURATION = Number(process.env.MAX_DURATION_SECONDS || 1200);
 const MAX_FILESIZE = process.env.MAX_FILESIZE || "500M";
 const FILE_TTL_MS = Number(process.env.FILE_TTL_MINUTES || 30) * 60_000;
@@ -129,6 +131,56 @@ function run(command, args, timeoutMs = 600_000) {
   });
 }
 
+async function probeMedia(filePath) {
+  const result = await run(FFPROBE_BIN, [
+    "-v", "error",
+    "-show_entries", "stream=codec_name,codec_type,width,height,pix_fmt:format=duration,size",
+    "-of", "json",
+    filePath,
+  ], 60_000);
+  return JSON.parse(result.stdout);
+}
+
+async function ensureCompatibleMp4(filePath) {
+  const initial = await probeMedia(filePath);
+  const video = initial.streams?.find((stream) => stream.codec_type === "video");
+  const audio = initial.streams?.find((stream) => stream.codec_type === "audio");
+  if (video?.codec_name === "h264" && (!audio || audio.codec_name === "aac") && video.pix_fmt === "yuv420p") {
+    return filePath;
+  }
+
+  const compatiblePath = join(resolve(filePath, ".."), ".totube-compatible.mp4");
+  await run(FFMPEG_BIN, [
+    "-hide_banner", "-loglevel", "error", "-y",
+    "-i", filePath,
+    "-map", "0:v:0",
+    "-map", "0:a:0?",
+    "-map_metadata", "0",
+    "-c:v", "libx264",
+    "-preset", "medium",
+    "-crf", "20",
+    "-pix_fmt", "yuv420p",
+    "-c:a", "aac",
+    "-b:a", "192k",
+    "-ac", "2",
+    "-movflags", "+faststart",
+    "-max_muxing_queue_size", "4096",
+    compatiblePath,
+  ], 1_800_000);
+
+  const verified = await probeMedia(compatiblePath);
+  const verifiedVideo = verified.streams?.find((stream) => stream.codec_type === "video");
+  const verifiedAudio = verified.streams?.find((stream) => stream.codec_type === "audio");
+  if (verifiedVideo?.codec_name !== "h264" || (verifiedAudio && verifiedAudio.codec_name !== "aac")) {
+    await rm(compatiblePath, { force: true });
+    throw new Error("Impossible de créer un MP4 H.264/AAC compatible.");
+  }
+
+  await rm(filePath, { force: true });
+  await rename(compatiblePath, filePath);
+  return filePath;
+}
+
 async function convert(request, body) {
   if (activeJobs >= MAX_CONCURRENT) throw new Error("Le serveur traite déjà plusieurs conversions. Réessayez dans un instant.");
   if (!consumeRateLimit(request)) throw new Error("Limite horaire atteinte. Réessayez plus tard.");
@@ -159,7 +211,7 @@ async function convert(request, body) {
   if (format === "mp4") {
     args.push(
       "--format",
-      `bv*[height<=${videoHeight}][ext=mp4]+ba[ext=m4a]/b[height<=${videoHeight}][ext=mp4]/b[height<=${videoHeight}]/b`,
+      `bv*[vcodec^=avc1][height<=${videoHeight}][ext=mp4]+ba[acodec^=mp4a][ext=m4a]/b[vcodec^=avc1][height<=${videoHeight}][ext=mp4]/bv*[height<=${videoHeight}]+ba/b[height<=${videoHeight}]/b`,
       "--merge-output-format", "mp4",
       "--remux-video", "mp4",
     );
@@ -179,6 +231,8 @@ async function convert(request, body) {
       if (candidate) filePath = join(jobDir, candidate);
     }
     if (!filePath) throw new Error("La conversion n’a produit aucun fichier.");
+
+    if (format === "mp4") filePath = await ensureCompatibleMp4(filePath);
 
     const fileInfo = await stat(filePath);
     const token = randomBytes(24).toString("hex");

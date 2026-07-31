@@ -4,6 +4,10 @@ Container-ready conversion API used by the toTube Next.js frontend. It runs
 `yt-dlp` and FFmpeg, returns MP3, M4A, or MP4 files, and uses the same response
 shape as the frontend's existing converter adapter.
 
+MP4 downloads prefer native H.264/AAC streams. If a platform only returns AV1,
+VP9, or another incompatible codec, the backend automatically transcodes it to
+H.264 High Compatibility (`yuv420p`) plus AAC and enables MP4 fast-start.
+
 ## Run locally
 
 From the repository root, use `npm run dev`. The frontend starts on port 3000
