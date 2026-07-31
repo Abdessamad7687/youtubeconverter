@@ -40,6 +40,14 @@ export async function generateMetadata(): Promise<Metadata> {
       "X Twitter vidéo",
     ],
     alternates: { canonical: "https://clipmint-media.abdessamadahmali.chatgpt.site/" },
+    manifest: "/manifest.webmanifest",
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
+    },
     robots: { index: true, follow: true },
     openGraph: {
       title: "toTube — Convertisseur YouTube MP3 & MP4",

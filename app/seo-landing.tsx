@@ -1,4 +1,5 @@
 import { ArrowRight, Check, Download, FileAudio, FileVideo, Link2, Play, ShieldCheck, Zap } from "lucide-react";
+import Link from "next/link";
 
 export type SeoPageContent = {
   slug: string;
@@ -53,19 +54,19 @@ export function SeoLandingPage({ content }: { content: SeoPageContent }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <header className="site-header seo-header">
-        <a href="/" className="brand" aria-label="Accueil toTube">
+        <Link href="/" className="brand" aria-label="Accueil toTube">
           <span className="brand-mark"><Play size={15} fill="currentColor" /></span>
           <span>totube</span>
-        </a>
-        <a className="nav-cta" href="/#converter">Convertir maintenant <ArrowRight size={15} /></a>
+        </Link>
+        <Link className="nav-cta" href="/#converter">Convertir maintenant <ArrowRight size={15} /></Link>
       </header>
 
       <section className="seo-hero">
-        <nav className="breadcrumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span><span>{content.title}</span></nav>
+        <nav className="breadcrumbs" aria-label="Fil d’Ariane"><Link href="/">Accueil</Link><span>/</span><span>{content.title}</span></nav>
         <span className="section-kicker">{content.kicker}</span>
         <h1>{content.title}<br /><em>{content.accent}</em></h1>
         <p>{content.intro}</p>
-        <a href="/#converter" className="seo-primary-cta">Convertir une vidéo <ArrowRight size={18} /></a>
+        <Link href="/#converter" className="seo-primary-cta">Convertir une vidéo <ArrowRight size={18} /></Link>
         <div className="seo-trust"><span><Check size={15} /> Gratuit</span><span><Check size={15} /> Sans inscription</span><span><Check size={15} /> MP3, M4A et MP4</span></div>
       </section>
 
@@ -84,7 +85,7 @@ export function SeoLandingPage({ content }: { content: SeoPageContent }) {
               {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             </section>
           ))}
-          <aside className="seo-callout"><span><Link2 /></span><div><strong>Prêt à convertir votre lien ?</strong><p>Collez l’URL, choisissez le format et récupérez votre fichier.</p></div><a href="/#converter">Ouvrir le convertisseur <ArrowRight size={15} /></a></aside>
+          <aside className="seo-callout"><span><Link2 /></span><div><strong>Prêt à convertir votre lien ?</strong><p>Collez l’URL, choisissez le format et récupérez votre fichier.</p></div><Link href="/#converter">Ouvrir le convertisseur <ArrowRight size={15} /></Link></aside>
         </div>
       </article>
 
@@ -101,12 +102,12 @@ export function SeoLandingPage({ content }: { content: SeoPageContent }) {
         <span className="section-kicker">Continuer</span><h2>Choisissez votre convertisseur</h2>
         <div>
           {relatedPages.filter((page) => page.href !== `/${content.slug}`).map((page) => (
-            <a href={page.href} key={page.href}><strong>{page.label}</strong><p>{page.text}</p><ArrowRight size={17} /></a>
+            <Link href={page.href} key={page.href}><strong>{page.label}</strong><p>{page.text}</p><ArrowRight size={17} /></Link>
           ))}
         </div>
       </section>
 
-      <footer className="seo-footer"><a href="/" className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></a><p>Convertisseur rapide pour les contenus que vous êtes autorisé à télécharger.</p><a href="/#converter"><Download size={15} /> Convertir</a></footer>
+      <footer className="seo-footer"><Link href="/" className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link><p>Convertisseur rapide pour les contenus que vous êtes autorisé à télécharger.</p><Link href="/#converter"><Download size={15} /> Convertir</Link></footer>
     </main>
   );
 }

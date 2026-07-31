@@ -98,8 +98,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "inspect", url: candidate }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "We couldn’t read that link.");
+      const data = (await response.json()) as { media?: MediaPreview; error?: string };
+      if (!response.ok || !data.media) throw new Error(data.error || "We couldn’t read that link.");
       setPreview(data.media);
       setPhase("ready");
     } catch (caught) {
@@ -132,8 +132,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "convert", url: candidate, format }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "This export isn’t available right now.");
+      const data = (await response.json()) as { download?: DownloadResult; error?: string };
+      if (!response.ok || !data.download) throw new Error(data.error || "This export isn’t available right now.");
       setProgress(100);
       setResult(data.download);
       window.setTimeout(() => setPhase("done"), 300);
@@ -148,7 +148,6 @@ export default function Home() {
     setPreview(null);
     setResult(null);
     setError("");
-    setRightsConfirmed(false);
     setProgress(0);
     setPhase("idle");
     window.setTimeout(() => inputRef.current?.focus(), 0);
@@ -159,7 +158,6 @@ export default function Home() {
     setFormat("mp4");
     setPreview(null);
     setResult(null);
-    setRightsConfirmed(true);
     setError("");
     setPhase("idle");
     window.setTimeout(() => inspectMedia(SAMPLE_URL), 0);
@@ -246,7 +244,11 @@ export default function Home() {
             {preview && phase !== "done" && (
               <div className="media-preview">
                 <div className="thumb">
-                  {preview.thumbnail ? <img src={preview.thumbnail} alt="" /> : <FileVideo size={26} />}
+                  {preview.thumbnail ? (
+                    // Remote media thumbnails are dynamic and intentionally bypass image optimization.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={preview.thumbnail} alt="" />
+                  ) : <FileVideo size={26} />}
                   <span><Play size={11} fill="currentColor" /></span>
                 </div>
                 <div className="media-meta">
@@ -349,7 +351,7 @@ export default function Home() {
         </div>
         <div className="benefit-grid">
           <article><span><Gauge /></span><h3>Rapide</h3><p>Convertissez une vidéo YouTube en quelques clics avec une progression claire.</p></article>
-          <article><span><ShieldCheck /></span><h3>Sécurisé</h3><p>Chaque téléchargement commence par une confirmation de vos droits d’utilisation.</p></article>
+          <article><span><ShieldCheck /></span><h3>Sécurisé</h3><p>Les liens sont validés avant traitement et les fichiers temporaires expirent automatiquement.</p></article>
           <article><span><Clock3 /></span><h3>Multi-appareils</h3><p>Une expérience responsive sur smartphone, tablette, Windows et Mac.</p></article>
           <article><span><LockKeyhole /></span><h3>Sans inscription</h3><p>Pas de profil obligatoire ni de bibliothèque personnelle pour convertir.</p></article>
         </div>
