@@ -21,9 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: base,
-    title: "toTube — Convertisseur YouTube MP3 & MP4 gratuit et rapide",
-    description: "Le meilleur convertisseur gratuit et rapide dans les formats MP3, MP4. Convertissez et téléchargez vos vidéos YouTube sans inscription.",
+    title: "YouTube MP3 & MP4 — Convertisseur gratuit | toTube",
+    description: "Convertisseur YouTube MP3 et MP4 gratuit, rapide et sans inscription. Collez un lien, choisissez votre format et téléchargez votre fichier avec toTube.",
     keywords: [
+      "youtube mp3",
+      "notube",
+      "youtube to mp3",
+      "youtube mp4",
+      "convertisseur mp3",
       "convertisseur YouTube MP3",
       "YouTube MP4",
       "télécharger vidéo YouTube",
@@ -34,6 +39,8 @@ export async function generateMetadata(): Promise<Metadata> {
       "sans inscription",
       "X Twitter vidéo",
     ],
+    alternates: { canonical: "https://clipmint-media.abdessamadahmali.chatgpt.site/" },
+    robots: { index: true, follow: true },
     openGraph: {
       title: "toTube — Convertisseur YouTube MP3 & MP4",
       description: "Convertissez vos vidéos rapidement, gratuitement et sans inscription.",
@@ -51,9 +58,31 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "toTube",
+    alternateName: ["toTube Converter", "toTube MP3"],
+    url: "https://clipmint-media.abdessamadahmali.chatgpt.site/",
+    inLanguage: "fr-FR",
+  };
+  const applicationSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "toTube",
+    url: "https://clipmint-media.abdessamadahmali.chatgpt.site/",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "Web",
+    description: "Convertisseur YouTube MP3 et MP4 gratuit et rapide.",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+  };
   return (
     <html lang="fr">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(applicationSchema) }} />
+        {children}
+      </body>
     </html>
   );
 }

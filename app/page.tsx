@@ -205,7 +205,7 @@ export default function Home() {
         <div className="hero-orbit orbit-two" aria-hidden="true" />
         <div className="hero-copy">
           <div className="eyebrow"><Sparkles size={14} /> YouTube MP3 &amp; MP4 en 2 clics</div>
-          <h1>Bienvenue sur<br /><span>toTube.</span></h1>
+          <h1>Convertisseur YouTube<br /><span>MP3 &amp; MP4.</span></h1>
           <p className="hero-subtitle">
             Le meilleur convertisseur gratuit et rapide dans les formats mp3, mp4, compatible X, YouTube, Twitter...
           </p>
@@ -393,7 +393,7 @@ export default function Home() {
       <footer>
         <div className="footer-main">
           <div><a href="#top" className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></a><p>Convertisseur vidéo rapide pour les contenus que vous êtes autorisé à télécharger.</p></div>
-          <div><strong>Explorer</strong><a href="#how">Comment ça marche</a><a href="#formats">Formats</a><a href="#faq">Questions</a></div>
+          <div><strong>Convertisseurs</strong><a href="/youtube-mp3">YouTube MP3</a><a href="/youtube-mp4">YouTube MP4</a><a href="/convertisseur-mp3">Convertisseur MP3</a><a href="/alternative-notube">Alternative à noTube</a></div>
           <div><strong>Principes</strong><span>Utilisation autorisée</span><span>Confidentiel par défaut</span><span>Sans inscription</span></div>
         </div>
         <div className="footer-bottom"><span>© 2026 toTube</span><span>Conçu pour les créateurs responsables.</span></div>
