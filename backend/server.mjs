@@ -12,6 +12,10 @@ const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "*";
 const WORK_ROOT = resolve(process.env.WORK_DIR || join(tmpdir(), "totube-converter"));
 const YTDLP_BIN = process.env.YTDLP_BIN || "yt-dlp";
+const YTDLP_PROXY = process.env.YTDLP_PROXY?.trim();
+const YTDLP_COOKIES_FILE = process.env.YTDLP_COOKIES_FILE?.trim();
+const YTDLP_JS_RUNTIME = process.env.YTDLP_JS_RUNTIME?.trim() || "node";
+const YTDLP_EXTRACTOR_ARGS = process.env.YTDLP_EXTRACTOR_ARGS?.trim();
 const FFMPEG_BIN = process.env.FFMPEG_BIN || "ffmpeg";
 const FFPROBE_BIN = process.env.FFPROBE_BIN || "ffprobe";
 const MAX_DURATION = Number(process.env.MAX_DURATION_SECONDS || 1200);
@@ -200,13 +204,17 @@ async function convert(request, body) {
     "--newline",
     "--restrict-filenames",
     "--concurrent-fragments", "4",
-    "--js-runtimes", "node",
+    "--js-runtimes", YTDLP_JS_RUNTIME,
     "--max-filesize", MAX_FILESIZE,
     "--match-filter", `duration <= ${MAX_DURATION} & !is_live`,
     "--paths", `home:${jobDir}`,
     "--output", "%(title).120B-%(id)s.%(ext)s",
     "--print", "after_move:filepath",
   ];
+
+  if (YTDLP_PROXY) args.push("--proxy", YTDLP_PROXY);
+  if (YTDLP_COOKIES_FILE) args.push("--cookies", YTDLP_COOKIES_FILE);
+  if (YTDLP_EXTRACTOR_ARGS) args.push("--extractor-args", YTDLP_EXTRACTOR_ARGS);
 
   if (format === "mp4") {
     args.push(
