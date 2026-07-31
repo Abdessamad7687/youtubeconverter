@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Innertube } from "youtubei.js";
+import { Innertube } from "youtubei.js/web";
 
 const YOUTUBE_HOSTS = new Set(["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "music.youtube.com"]);
 
