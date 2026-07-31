@@ -73,7 +73,6 @@ export default function Home() {
   const [preview, setPreview] = useState<MediaPreview | null>(null);
   const [result, setResult] = useState<DownloadResult | null>(null);
   const [error, setError] = useState("");
-  const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [progress, setProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -121,11 +120,6 @@ export default function Home() {
 
     if (!preview || phase === "error") {
       await inspectMedia(candidate);
-      return;
-    }
-
-    if (!rightsConfirmed) {
-      setError("Confirmez que vous avez l’autorisation de traiter ce contenu.");
       return;
     }
 
@@ -281,14 +275,6 @@ export default function Home() {
                   })}
                 </div>
               </fieldset>
-            )}
-
-            {preview && phase !== "done" && (
-              <label className="rights-check">
-                <input type="checkbox" checked={rightsConfirmed} onChange={(event) => { setRightsConfirmed(event.target.checked); setError(""); }} />
-                <span className="checkbox-ui"><Check size={13} /></span>
-                <span>J’ai créé ce contenu ou je suis autorisé à le télécharger et le convertir.</span>
-              </label>
             )}
 
             {phase === "converting" && (

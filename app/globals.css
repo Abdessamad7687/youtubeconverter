@@ -124,10 +124,6 @@ main { overflow: hidden; }
 .radio-dot { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #acaea9; display: grid; place-items: center; }
 .selected .radio-dot { border-color: var(--ink); }
 .selected .radio-dot span { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
-.rights-check { margin-top: 14px; display: flex; align-items: flex-start; gap: 8px; font-size: 10px; line-height: 1.45; color: #656b67; cursor: pointer; }
-.rights-check input { position: absolute; opacity: 0; }
-.checkbox-ui { width: 16px; height: 16px; flex: 0 0 auto; border: 1.5px solid #a8aaa6; border-radius: 4px; display: grid; place-items: center; color: transparent; }
-.rights-check input:checked + .checkbox-ui { background: var(--ink); border-color: var(--ink); color: white; }
 .progress-wrap { margin-top: 16px; }
 .progress-wrap > div:first-child { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 7px; }
 .progress-track { height: 7px; background: #e5e3dc; border-radius: 9px; overflow: hidden; }
