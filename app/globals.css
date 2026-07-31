@@ -83,7 +83,12 @@ main { overflow: hidden; }
 .hero h1 span { color: transparent; -webkit-text-stroke: 2px var(--ink); font-style: italic; font-weight: 600; }
 .hero-subtitle { max-width: 580px; margin: 0 auto; color: var(--muted); font-size: 17px; line-height: 1.6; }
 
-.converter-shell { position: relative; z-index: 3; width: min(790px, 100%); background: var(--white); border: 1px solid rgba(23,27,26,.23); border-radius: 18px; margin-top: 42px; box-shadow: 0 18px 50px rgba(20,35,28,.13), 0 5px 0 rgba(23,27,26,.08); overflow: hidden; }
+.ad-unit { position: relative; z-index: 3; width: 100%; margin: 28px auto 0; }
+.ad-unit > span { display: block; margin-bottom: 5px; color: #8b8e8b; font-family: var(--font-geist-mono), monospace; font-size: 8px; letter-spacing: 1px; text-align: center; text-transform: uppercase; }
+.ad-viewport { width: 100%; overflow: hidden; }
+.ad-viewport iframe { display: block; border: 0; margin: 0; transform-origin: top left; }
+
+.converter-shell { position: relative; z-index: 3; width: min(790px, 100%); background: var(--white); border: 1px solid rgba(23,27,26,.23); border-radius: 18px; margin-top: 28px; box-shadow: 0 18px 50px rgba(20,35,28,.13), 0 5px 0 rgba(23,27,26,.08); overflow: hidden; }
 .converter-topline { min-height: 39px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-family: var(--font-geist-mono), monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #5d625f; background: #f4f1e9; }
 .converter-topline span { display: flex; align-items: center; gap: 6px; }
 .status-dot { display: inline-block!important; width: 7px; height: 7px; border-radius: 50%; background: #42c47e; box-shadow: 0 0 0 3px rgba(66,196,126,.14); }
@@ -242,7 +247,8 @@ footer { background: #111514; color: white; padding: 70px clamp(20px, 7vw, 108px
   .hero h1 { font-size: clamp(46px, 14vw, 66px); letter-spacing: -3.5px; margin-top: 23px; }
   .hero h1 span { -webkit-text-stroke-width: 1.3px; }
   .hero-subtitle { font-size: 14px; padding: 0 4px; }
-  .converter-shell { margin-top: 32px; }
+  .ad-unit { margin-top: 22px; }
+  .converter-shell { margin-top: 22px; }
   .converter-topline { padding: 0 13px; font-size: 8px; }
   .converter-form { padding: 16px; }
   .url-row { grid-template-columns: 1fr; }

@@ -40,6 +40,50 @@ type DownloadResult = {
 
 const SAMPLE_URL =
   "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+const SMARTLINK_URL =
+  "https://www.effectivecpmnetwork.com/ajqxrtk2?key=e88c6ebfc5c63d06d4e955cce6e4d950";
+
+type AdBannerProps = {
+  adKey: string;
+  width: number;
+  height: number;
+};
+
+function AdBanner({ adKey, width, height }: AdBannerProps) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const resize = () => setScale(Math.min(1, viewport.clientWidth / width));
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [width]);
+
+  const source = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=${width},initial-scale=1"><style>html,body{margin:0;padding:0;width:${width}px;height:${height}px;overflow:hidden;background:transparent}</style></head><body><script>atOptions=${JSON.stringify({ key: adKey, format: "iframe", height, width, params: {} })};</script><script src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script></body></html>`;
+
+  return (
+    <aside className="ad-unit" style={{ maxWidth: width }} aria-label="Publicité">
+      <span>Publicité</span>
+      <div ref={viewportRef} className="ad-viewport" style={{ height: height * scale }}>
+        <iframe
+          title={`Publicité ${width} × ${height}`}
+          srcDoc={source}
+          width={width}
+          height={height}
+          loading="lazy"
+          referrerPolicy="origin"
+          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+          style={{ transform: `scale(${scale})` }}
+        />
+      </div>
+    </aside>
+  );
+}
 
 const formats: { id: Format; label: string; note: string; icon: typeof FileAudio }[] = [
   { id: "mp3", label: "MP3", note: "Audio", icon: FileAudio },
@@ -123,6 +167,7 @@ export default function Home() {
       return;
     }
 
+    window.open(SMARTLINK_URL, "_blank", "noopener");
     setPhase("converting");
     setError("");
     setProgress(12);
@@ -202,6 +247,8 @@ export default function Home() {
             Le meilleur convertisseur gratuit et rapide dans les formats mp3, mp4, compatible X, YouTube, Twitter...
           </p>
         </div>
+
+        <AdBanner adKey="5321f0adf5a727cf9500e1e0bce95ca9" width={728} height={90} />
 
         <div className="converter-shell" id="converter">
           <div className="converter-topline">
@@ -300,6 +347,8 @@ export default function Home() {
             {error && <div className="error-message" role="alert"><span>!</span>{error}</div>}
           </form>
         </div>
+
+        <AdBanner adKey="4ed5c4bd0900ef9380332764b589781a" width={468} height={60} />
 
         <div className="trust-row">
           <span><ShieldCheck size={17} /> Utilisation autorisée</span>

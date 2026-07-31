@@ -29,6 +29,8 @@ test("server-renders an indexable, keyword-focused homepage", async () => {
   assert.match(html, /"@type":"WebSite","name":"toTube"/i);
   assert.match(html, /href="\/youtube-mp3"/i);
   assert.match(html, /href="\/youtube-mp4"/i);
+  assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
+  assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });
 
