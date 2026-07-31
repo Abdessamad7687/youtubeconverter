@@ -21,18 +21,30 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: base,
-    title: "ClipMint — Clean media exports",
-    description: "Turn media links you have permission to use into clean audio or video exports.",
+    title: "toTube — Convertisseur YouTube MP3 & MP4 gratuit et rapide",
+    description: "Le meilleur convertisseur gratuit et rapide dans les formats MP3, MP4. Convertissez et téléchargez vos vidéos YouTube sans inscription.",
+    keywords: [
+      "convertisseur YouTube MP3",
+      "YouTube MP4",
+      "télécharger vidéo YouTube",
+      "video converter",
+      "convertisseur MP3 gratuit",
+      "YouTube downloader",
+      "convertisseur vidéo rapide",
+      "sans inscription",
+      "X Twitter vidéo",
+    ],
     openGraph: {
-      title: "ClipMint — Turn a link into something useful",
-      description: "Clean media exports. Zero fuss.",
+      title: "toTube — Convertisseur YouTube MP3 & MP4",
+      description: "Convertissez vos vidéos rapidement, gratuitement et sans inscription.",
       type: "website",
-      images: [{ url: "/og.png", width: 1731, height: 909, alt: "ClipMint media converter" }],
+      locale: "fr_FR",
+      images: [{ url: "/og.png", width: 1731, height: 909, alt: "toTube, convertisseur YouTube MP3 et MP4" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "ClipMint — Turn a link into something useful",
-      description: "Clean media exports. Zero fuss.",
+      title: "toTube — Convertisseur YouTube MP3 & MP4",
+      description: "Convertissez vos vidéos rapidement, gratuitement et sans inscription.",
       images: ["/og.png"],
     },
   };
@@ -40,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>{children}</body>
     </html>
   );

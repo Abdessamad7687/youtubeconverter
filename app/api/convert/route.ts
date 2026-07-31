@@ -6,14 +6,14 @@ const YOUTUBE_HOSTS = new Set(["youtube.com", "www.youtube.com", "m.youtube.com"
 const DIRECT_EXTENSIONS = new Set(["mp3", "mp4", "m4a", "webm", "mov", "wav", "ogg"]);
 
 function parseMediaUrl(input: unknown) {
-  if (typeof input !== "string" || input.length > 2048) throw new Error("Paste a valid media link.");
+  if (typeof input !== "string" || input.length > 2048) throw new Error("Collez un lien vidéo valide.");
   let parsed: URL;
   try {
     parsed = new URL(input);
   } catch {
-    throw new Error("That doesn’t look like a complete URL.");
+    throw new Error("Cette adresse ne ressemble pas à une URL complète.");
   }
-  if (parsed.protocol !== "https:") throw new Error("For your safety, only HTTPS links are accepted.");
+  if (parsed.protocol !== "https:") throw new Error("Pour votre sécurité, seuls les liens HTTPS sont acceptés.");
   return parsed;
 }
 
@@ -32,7 +32,7 @@ function safeFilename(title: string, format: Format) {
     .replace(/[^a-zA-Z0-9\s-_]/g, "")
     .trim()
     .replace(/\s+/g, "-")
-    .slice(0, 80) || "clipmint-export";
+    .slice(0, 80) || "totube-video";
   return `${base}.${format}`;
 }
 
@@ -42,7 +42,7 @@ async function inspect(url: URL) {
     endpoint.searchParams.set("url", url.toString());
     endpoint.searchParams.set("format", "json");
     const response = await fetch(endpoint, { headers: { Accept: "application/json" } });
-    if (!response.ok) throw new Error("We couldn’t access that YouTube video. Make sure it is public.");
+    if (!response.ok) throw new Error("Impossible d’accéder à cette vidéo YouTube. Vérifiez qu’elle est publique.");
     const data = (await response.json()) as { title?: string; author_name?: string; thumbnail_url?: string };
     return {
       title: data.title || "YouTube video",
@@ -53,7 +53,7 @@ async function inspect(url: URL) {
   }
 
   const extension = directExtension(url);
-  if (!extension) throw new Error("Use a public YouTube link or a direct link ending in MP3, MP4, M4A, WEBM, MOV, WAV, or OGG.");
+  if (!extension) throw new Error("Utilisez un lien YouTube public ou un lien direct MP3, MP4, M4A, WEBM, MOV, WAV ou OGG.");
   const rawName = decodeURIComponent(url.pathname.split("/").pop() || "Media file").replace(/\.[^.]+$/, "");
   const title = rawName.replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
   return { title, source: "Direct media" as const };
@@ -62,7 +62,7 @@ async function inspect(url: URL) {
 async function requestConverter(url: URL, format: Format) {
   const converterUrl = process.env.CONVERTER_API_URL?.trim();
   if (!converterUrl) {
-    throw new Error("YouTube exporting needs the private conversion service to be connected. The built-in Creative Commons sample is ready to try now.");
+    throw new Error("La conversion audio MP3/M4A nécessite un serveur FFmpeg privé. Le téléchargement YouTube MP4 fonctionne déjà ; choisissez MP4 ou connectez le service audio.");
   }
 
   const headers: Record<string, string> = { "Content-Type": "application/json", Accept: "application/json" };
@@ -88,10 +88,10 @@ async function requestConverter(url: URL, format: Format) {
     text?: string;
   };
   if (!response.ok || data.status === "error") {
-    throw new Error(data.text || data.error?.code || "The conversion service couldn’t prepare this link.");
+    throw new Error(data.text || data.error?.code || "Le serveur de conversion n’a pas pu préparer ce lien.");
   }
   const downloadUrl = data.url || data.picker?.[0]?.url;
-  if (!downloadUrl) throw new Error("The conversion completed without a downloadable file.");
+  if (!downloadUrl) throw new Error("La conversion s’est terminée sans fichier téléchargeable.");
   return { url: downloadUrl, filename: data.filename };
 }
 
@@ -102,9 +102,9 @@ export async function POST(request: NextRequest) {
     if (body.action === "inspect") {
       return NextResponse.json({ media: await inspect(url) });
     }
-    if (body.action !== "convert") return NextResponse.json({ error: "Unknown action." }, { status: 400 });
+    if (body.action !== "convert") return NextResponse.json({ error: "Action inconnue." }, { status: 400 });
     if (!body.format || !["mp3", "mp4", "m4a"].includes(body.format)) {
-      return NextResponse.json({ error: "Choose a supported format." }, { status: 400 });
+      return NextResponse.json({ error: "Choisissez un format pris en charge." }, { status: 400 });
     }
 
     const media = await inspect(url);
@@ -119,6 +119,17 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (isYouTube(url) && body.format === "mp4" && !process.env.CONVERTER_API_URL) {
+      const params = new URLSearchParams({ url: url.toString() });
+      return NextResponse.json({
+        download: {
+          url: `/api/download?${params.toString()}`,
+          filename: safeFilename(media.title, "mp4"),
+          note: "MP4 360p — vidéo et audio",
+        },
+      });
+    }
+
     const converted = await requestConverter(url, body.format);
     return NextResponse.json({
       download: {
@@ -128,7 +139,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (caught) {
-    const message = caught instanceof Error ? caught.message : "Something went wrong while processing this link.";
+    const message = caught instanceof Error ? caught.message : "Une erreur est survenue pendant le traitement du lien.";
     return NextResponse.json({ error: message }, { status: 422 });
   }
 }

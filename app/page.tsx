@@ -43,32 +43,32 @@ const SAMPLE_URL =
 
 const formats: { id: Format; label: string; note: string; icon: typeof FileAudio }[] = [
   { id: "mp3", label: "MP3", note: "Audio", icon: FileAudio },
-  { id: "mp4", label: "MP4", note: "Video", icon: FileVideo },
-  { id: "m4a", label: "M4A", note: "HQ audio", icon: FileAudio },
+  { id: "mp4", label: "MP4", note: "Vidéo", icon: FileVideo },
+  { id: "m4a", label: "M4A", note: "Audio HQ", icon: FileAudio },
 ];
 
 const faqs = [
   {
-    q: "What links can I use?",
-    a: "ClipMint accepts YouTube links and direct links to media files. Only process media you created, own, or have explicit permission to download.",
+    q: "Quels liens puis-je utiliser ?",
+    a: "toTube accepte les liens YouTube publics et les liens directs vers des médias. Téléchargez uniquement les contenus que vous avez créés ou que vous êtes autorisé à utiliser.",
   },
   {
-    q: "Does ClipMint store my files?",
-    a: "No. Links are processed only to prepare your requested export, and this interface does not build a personal media library or sell your activity.",
+    q: "toTube conserve-t-il mes fichiers ?",
+    a: "Non. Les liens sont traités uniquement pour préparer votre conversion. Nous ne créons pas de bibliothèque personnelle et ne revendons pas votre activité.",
   },
   {
-    q: "Which format should I choose?",
-    a: "Choose MP3 for broadly compatible audio, M4A for efficient high-quality audio, or MP4 when you want to keep the video.",
+    q: "Quel format choisir ?",
+    a: "Choisissez MP3 pour un fichier audio universel, M4A pour un son de qualité ou MP4 pour conserver la vidéo. Le MP4 YouTube fonctionne directement ; MP3 et M4A nécessitent le service audio.",
   },
   {
-    q: "Why might a conversion fail?",
-    a: "Private, age-restricted, region-locked, live, or rights-managed media may be unavailable. Platforms also change their delivery systems from time to time.",
+    q: "Pourquoi une conversion peut-elle échouer ?",
+    a: "Les vidéos privées, limitées par âge, bloquées dans votre région, en direct ou protégées peuvent être indisponibles. Les plateformes modifient aussi régulièrement leur diffusion.",
   },
 ];
 
 export default function Home() {
   const [url, setUrl] = useState("");
-  const [format, setFormat] = useState<Format>("mp3");
+  const [format, setFormat] = useState<Format>("mp4");
   const [phase, setPhase] = useState<Phase>("idle");
   const [preview, setPreview] = useState<MediaPreview | null>(null);
   const [result, setResult] = useState<DownloadResult | null>(null);
@@ -113,7 +113,7 @@ export default function Home() {
     event.preventDefault();
     const candidate = url.trim();
     if (!candidate) {
-      setError("Paste a media link to get started.");
+      setError("Collez un lien vidéo pour commencer.");
       setPhase("error");
       inputRef.current?.focus();
       return;
@@ -125,7 +125,7 @@ export default function Home() {
     }
 
     if (!rightsConfirmed) {
-      setError("Confirm you have permission to process this media.");
+      setError("Confirmez que vous avez l’autorisation de traiter ce contenu.");
       return;
     }
 
@@ -173,26 +173,26 @@ export default function Home() {
 
   const buttonLabel =
     phase === "inspecting"
-      ? "Reading link…"
+      ? "Analyse du lien…"
       : phase === "converting"
-        ? "Converting…"
+        ? "Conversion…"
         : preview
-          ? "Convert now"
-          : "Find media";
+          ? "Convertir maintenant"
+          : "Rechercher";
 
   return (
     <main>
       <header className="site-header">
-        <a href="#top" className="brand" aria-label="ClipMint home">
+        <a href="#top" className="brand" aria-label="Accueil toTube">
           <span className="brand-mark"><Play size={15} fill="currentColor" /></span>
-          <span>clipmint</span>
+          <span>totube</span>
         </a>
         <nav className={menuOpen ? "nav-links open" : "nav-links"} aria-label="Main navigation">
-          <a href="#how" onClick={() => setMenuOpen(false)}>How it works</a>
+          <a href="#how" onClick={() => setMenuOpen(false)}>Comment ça marche</a>
           <a href="#formats" onClick={() => setMenuOpen(false)}>Formats</a>
-          <a href="#faq" onClick={() => setMenuOpen(false)}>FAQ</a>
+          <a href="#faq" onClick={() => setMenuOpen(false)}>Questions</a>
           <a href="#converter" className="nav-cta" onClick={() => setMenuOpen(false)}>
-            Start converting <ArrowRight size={15} />
+            Convertir une vidéo <ArrowRight size={15} />
           </a>
         </nav>
         <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
@@ -204,21 +204,21 @@ export default function Home() {
         <div className="hero-orbit orbit-one" aria-hidden="true" />
         <div className="hero-orbit orbit-two" aria-hidden="true" />
         <div className="hero-copy">
-          <div className="eyebrow"><Sparkles size={14} /> Clean files, zero fuss</div>
-          <h1>Turn a link into<br /><span>something useful.</span></h1>
+          <div className="eyebrow"><Sparkles size={14} /> YouTube MP3 &amp; MP4 en 2 clics</div>
+          <h1>Bienvenue sur<br /><span>toTube.</span></h1>
           <p className="hero-subtitle">
-            Export media you have permission to use as crisp audio or video. No account, no clutter, just a clean download.
+            Le meilleur convertisseur gratuit et rapide dans les formats mp3, mp4, compatible X, YouTube, Twitter...
           </p>
         </div>
 
         <div className="converter-shell" id="converter">
           <div className="converter-topline">
-            <span><span className="status-dot" /> Converter ready</span>
-            <span>Private by design <LockKeyhole size={13} /></span>
+            <span><span className="status-dot" /> Convertisseur prêt</span>
+            <span>Confidentiel par défaut <LockKeyhole size={13} /></span>
           </div>
 
           <form onSubmit={onSubmit} className="converter-form">
-            <label htmlFor="media-url">Paste your media link</label>
+            <label htmlFor="media-url">Collez l’URL de votre vidéo</label>
             <div className="url-row">
               <div className="url-field">
                 <Link2 size={20} />
@@ -246,7 +246,7 @@ export default function Home() {
               </button>
             </div>
             <button className="sample-link" type="button" onClick={loadSample}>
-              No link handy? Try our Creative Commons sample <ArrowRight size={13} />
+              Pas de lien ? Essayez notre vidéo Creative Commons <ArrowRight size={13} />
             </button>
 
             {preview && phase !== "done" && (
@@ -266,7 +266,7 @@ export default function Home() {
 
             {preview && phase !== "done" && (
               <fieldset className="format-picker" id="formats">
-                <legend>Choose a format</legend>
+                <legend>Choisissez un format</legend>
                 <div className="format-options">
                   {formats.map((item) => {
                     const Icon = item.icon;
@@ -287,13 +287,13 @@ export default function Home() {
               <label className="rights-check">
                 <input type="checkbox" checked={rightsConfirmed} onChange={(event) => { setRightsConfirmed(event.target.checked); setError(""); }} />
                 <span className="checkbox-ui"><Check size={13} /></span>
-                <span>I created this media or have permission to download and convert it.</span>
+                <span>J’ai créé ce contenu ou je suis autorisé à le télécharger et le convertir.</span>
               </label>
             )}
 
             {phase === "converting" && (
               <div className="progress-wrap" aria-live="polite">
-                <div><span>Preparing your {format.toUpperCase()}</span><strong>{progress}%</strong></div>
+                <div><span>Préparation du fichier {format.toUpperCase()}</span><strong>{progress}%</strong></div>
                 <div className="progress-track"><span style={{ width: `${progress}%` }} /></div>
               </div>
             )}
@@ -301,11 +301,11 @@ export default function Home() {
             {phase === "done" && result && (
               <div className="download-card" aria-live="polite">
                 <div className="success-icon"><Check size={22} /></div>
-                <div><small>Your file is ready</small><strong>{result.filename}</strong><span>{result.note || "Ready to save to your device"}</span></div>
+                <div><small>Votre fichier est prêt</small><strong>{result.filename}</strong><span>{result.note || "Prêt à être enregistré"}</span></div>
                 <a className="download-button" href={result.url} download={result.filename} target="_blank" rel="noreferrer">
-                  <Download size={18} /> Download
+                  <Download size={18} /> Télécharger
                 </a>
-                <button type="button" onClick={reset}>Convert another link</button>
+                <button type="button" onClick={reset}>Convertir un autre lien</button>
               </div>
             )}
 
@@ -314,41 +314,41 @@ export default function Home() {
         </div>
 
         <div className="trust-row">
-          <span><ShieldCheck size={17} /> Permission-first</span>
-          <span><Zap size={17} /> Fast exports</span>
-          <span><LockKeyhole size={17} /> No account needed</span>
+          <span><ShieldCheck size={17} /> Utilisation autorisée</span>
+          <span><Zap size={17} /> Conversion rapide</span>
+          <span><LockKeyhole size={17} /> Sans inscription</span>
         </div>
       </section>
 
       <section className="marquee" aria-label="Supported media types">
-        <div>YOUTUBE <span>✦</span> DIRECT VIDEO <span>✦</span> MP3 <span>✦</span> MP4 <span>✦</span> M4A <span>✦</span> CREATOR-FRIENDLY <span>✦</span></div>
+        <div>YOUTUBE MP3 <span>✦</span> YOUTUBE MP4 <span>✦</span> TÉLÉCHARGER VIDÉO <span>✦</span> CONVERTISSEUR GRATUIT <span>✦</span> SANS INSCRIPTION <span>✦</span></div>
       </section>
 
       <section className="how-section" id="how">
         <div className="section-heading">
-          <div><span className="section-kicker">How it works</span><h2>Three steps.<br />That’s the whole thing.</h2></div>
-          <p>We stripped away the noise so you can get from link to file without an instruction manual.</p>
+          <div><span className="section-kicker">Comment ça marche</span><h2>Trois étapes.<br />Et c’est tout.</h2></div>
+          <p>Saisissez l’URL d’une vidéo, choisissez MP3, MP4 ou M4A, puis téléchargez votre fichier sans inscription.</p>
         </div>
         <div className="steps-grid">
           <article className="step-card mint">
             <span className="step-number">01</span>
             <div className="step-icon"><Link2 /></div>
-            <h3>Paste a link</h3>
-            <p>Drop in a supported YouTube or direct media URL.</p>
+            <h3>Collez le lien</h3>
+            <p>Ajoutez l’URL YouTube publique ou le lien direct de votre média.</p>
             <div className="mini-input"><Link2 size={14} /><span>youtube.com/watch?v=…</span><Check size={14} /></div>
           </article>
           <article className="step-card cream">
             <span className="step-number">02</span>
             <div className="step-icon"><WandSparkles /></div>
-            <h3>Pick your format</h3>
-            <p>Choose audio for listening or video to keep the picture.</p>
+            <h3>Choisissez le format</h3>
+            <p>MP3 ou M4A pour l’audio, MP4 pour conserver la vidéo.</p>
             <div className="mini-formats"><span className="active">MP3</span><span>MP4</span><span>M4A</span></div>
           </article>
           <article className="step-card violet">
             <span className="step-number">03</span>
             <div className="step-icon"><Download /></div>
-            <h3>Save your file</h3>
-            <p>When the export is ready, download it directly to your device.</p>
+            <h3>Téléchargez</h3>
+            <p>Une fois la conversion terminée, enregistrez le fichier sur votre appareil.</p>
             <div className="mini-download"><span><FileAudio size={17} /> your-audio.mp3</span><ArrowDown size={16} /></div>
           </article>
         </div>
@@ -356,21 +356,21 @@ export default function Home() {
 
       <section className="why-section">
         <div className="why-copy">
-          <span className="section-kicker">Why ClipMint</span>
-          <h2>A converter that<br /><em>respects your time.</em></h2>
-          <p>Simple on the surface, thoughtfully engineered underneath. ClipMint keeps the important bits and leaves out the rest.</p>
-          <a href="#converter">Try it now <ArrowRight size={17} /></a>
+          <span className="section-kicker">Pourquoi toTube</span>
+          <h2>Un convertisseur<br /><em>simple et rapide.</em></h2>
+          <p>toTube est un convertisseur YouTube MP3 et YouTube MP4 conçu pour fonctionner sur mobile, tablette et ordinateur, sans compte ni interface compliquée.</p>
+          <a href="#converter">Essayer maintenant <ArrowRight size={17} /></a>
         </div>
         <div className="benefit-grid">
-          <article><span><Gauge /></span><h3>Quick by default</h3><p>A direct flow with clear progress and no unnecessary sign-up wall.</p></article>
-          <article><span><ShieldCheck /></span><h3>Rights-aware</h3><p>A simple permission check keeps responsible media use front and center.</p></article>
-          <article><span><Clock3 /></span><h3>Works everywhere</h3><p>A responsive experience designed for phones, tablets, and desktops.</p></article>
-          <article><span><LockKeyhole /></span><h3>Less data</h3><p>No personal library, no social profile, and no account needed for an export.</p></article>
+          <article><span><Gauge /></span><h3>Rapide</h3><p>Convertissez une vidéo YouTube en quelques clics avec une progression claire.</p></article>
+          <article><span><ShieldCheck /></span><h3>Sécurisé</h3><p>Chaque téléchargement commence par une confirmation de vos droits d’utilisation.</p></article>
+          <article><span><Clock3 /></span><h3>Multi-appareils</h3><p>Une expérience responsive sur smartphone, tablette, Windows et Mac.</p></article>
+          <article><span><LockKeyhole /></span><h3>Sans inscription</h3><p>Pas de profil obligatoire ni de bibliothèque personnelle pour convertir.</p></article>
         </div>
       </section>
 
       <section className="faq-section" id="faq">
-        <div className="faq-title"><span className="section-kicker">Good to know</span><h2>Questions,<br />answered.</h2><p>Still stuck? Make sure the link is public and points to media you’re allowed to process.</p></div>
+        <div className="faq-title"><span className="section-kicker">Bon à savoir</span><h2>Questions,<br />réponses.</h2><p>Vérifiez que la vidéo est publique et que vous êtes autorisé à la télécharger.</p></div>
         <div className="faq-list">
           {faqs.map((faq, index) => (
             <article key={faq.q} className={openFaq === index ? "open" : ""}>
@@ -385,18 +385,18 @@ export default function Home() {
 
       <section className="final-cta">
         <span className="cta-spark cta-one">✦</span><span className="cta-spark cta-two">✦</span>
-        <p>YOUR NEXT EXPORT IS ONE LINK AWAY</p>
-        <h2>Got a link?<br /><span>Let’s mint it.</span></h2>
-        <a href="#converter">Start converting <ArrowRight size={18} /></a>
+        <p>VOTRE PROCHAINE CONVERSION EST À UN LIEN</p>
+        <h2>Une vidéo ?<br /><span>toTube-la.</span></h2>
+        <a href="#converter">Convertir maintenant <ArrowRight size={18} /></a>
       </section>
 
       <footer>
         <div className="footer-main">
-          <div><a href="#top" className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>clipmint</span></a><p>Clean media exports for content you own or have permission to use.</p></div>
-          <div><strong>Explore</strong><a href="#how">How it works</a><a href="#formats">Formats</a><a href="#faq">FAQ</a></div>
-          <div><strong>Principles</strong><span>Permission-first</span><span>Private by design</span><span>No media library</span></div>
+          <div><a href="#top" className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></a><p>Convertisseur vidéo rapide pour les contenus que vous êtes autorisé à télécharger.</p></div>
+          <div><strong>Explorer</strong><a href="#how">Comment ça marche</a><a href="#formats">Formats</a><a href="#faq">Questions</a></div>
+          <div><strong>Principes</strong><span>Utilisation autorisée</span><span>Confidentiel par défaut</span><span>Sans inscription</span></div>
         </div>
-        <div className="footer-bottom"><span>© 2026 ClipMint</span><span>Made for responsible creators.</span></div>
+        <div className="footer-bottom"><span>© 2026 toTube</span><span>Conçu pour les créateurs responsables.</span></div>
       </footer>
     </main>
   );
