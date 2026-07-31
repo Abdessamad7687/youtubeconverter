@@ -4,7 +4,7 @@ import { SeoLandingPage, type SeoPageContent } from "../seo-landing";
 export const metadata: Metadata = {
   title: "YouTube MP4 — Télécharger une vidéo MP4 | toTube",
   description: "Convertisseur YouTube MP4 gratuit et rapide. Téléchargez vos vidéos autorisées en MP4 H.264 compatible, jusqu’en 1080p.",
-  alternates: { canonical: "https://clipmint-media.abdessamadahmali.chatgpt.site/youtube-mp4" },
+  alternates: { canonical: "https://totube.online/youtube-mp4" },
   openGraph: { title: "YouTube MP4 compatible — toTube", description: "Des vidéos MP4 H.264 et AAC compatibles avec tous vos appareils.", url: "/youtube-mp4" },
 };
 

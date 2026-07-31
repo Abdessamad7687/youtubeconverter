@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = "https://clipmint-media.abdessamadahmali.chatgpt.site";
+const siteUrl = "https://totube.online";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

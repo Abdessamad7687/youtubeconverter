@@ -4,7 +4,7 @@ import { SeoLandingPage, type SeoPageContent } from "../seo-landing";
 export const metadata: Metadata = {
   title: "YouTube MP3 gratuit — Convertir YouTube en MP3 | toTube",
   description: "Convertissez une vidéo YouTube en MP3 gratuitement avec toTube. Un convertisseur YouTube MP3 rapide, simple et sans inscription.",
-  alternates: { canonical: "https://clipmint-media.abdessamadahmali.chatgpt.site/youtube-mp3" },
+  alternates: { canonical: "https://totube.online/youtube-mp3" },
   openGraph: { title: "YouTube MP3 gratuit — toTube", description: "Transformez une vidéo YouTube autorisée en fichier MP3.", url: "/youtube-mp3" },
 };
 

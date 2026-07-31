@@ -4,7 +4,7 @@ import { SeoLandingPage, type SeoPageContent } from "../seo-landing";
 export const metadata: Metadata = {
   title: "Alternative à noTube pour YouTube MP3 & MP4 | toTube",
   description: "Vous cherchez une alternative à noTube ? Découvrez toTube, un convertisseur YouTube MP3 et MP4 rapide, sans inscription et axé compatibilité.",
-  alternates: { canonical: "https://clipmint-media.abdessamadahmali.chatgpt.site/alternative-notube" },
+  alternates: { canonical: "https://totube.online/alternative-notube" },
   openGraph: { title: "Alternative à noTube — toTube", description: "Une alternative claire pour convertir vos contenus autorisés en MP3, M4A ou MP4.", url: "/alternative-notube" },
 };
 

@@ -4,7 +4,7 @@ import { SeoLandingPage, type SeoPageContent } from "../seo-landing";
 export const metadata: Metadata = {
   title: "Convertisseur MP3 gratuit en ligne | toTube",
   description: "Convertisseur MP3 gratuit pour transformer un lien vidéo autorisé en audio. Rapide, sans inscription et compatible avec tous vos appareils.",
-  alternates: { canonical: "https://clipmint-media.abdessamadahmali.chatgpt.site/convertisseur-mp3" },
+  alternates: { canonical: "https://totube.online/convertisseur-mp3" },
   openGraph: { title: "Convertisseur MP3 gratuit — toTube", description: "Créez un vrai fichier MP3 compatible à partir d’un lien autorisé.", url: "/convertisseur-mp3" },
 };
 

@@ -13,7 +13,7 @@ export type SeoPageContent = {
   faqs: { question: string; answer: string }[];
 };
 
-const siteUrl = "https://clipmint-media.abdessamadahmali.chatgpt.site";
+const siteUrl = "https://totube.online";
 
 const relatedPages = [
   { href: "/youtube-mp3", label: "YouTube MP3", text: "Extraire un fichier audio MP3 depuis une vidéo autorisée." },

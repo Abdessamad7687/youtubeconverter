@@ -24,7 +24,7 @@ test("server-renders an indexable, keyword-focused homepage", async () => {
   assert.match(html, /<title>YouTube MP3 &amp; MP4 — Convertisseur gratuit \| toTube<\/title>/i);
   assert.match(html, /<meta name="description" content="[^"]*Convertisseur YouTube MP3/i);
   assert.match(html, /<meta name="robots" content="index, follow"/i);
-  assert.match(html, /rel="canonical" href="https:\/\/clipmint-media\.abdessamadahmali\.chatgpt\.site\/"/i);
+  assert.match(html, /rel="canonical" href="https:\/\/totube\.online\/"/i);
   assert.match(html, /<h1>Convertisseur YouTube/i);
   assert.match(html, /"@type":"WebSite","name":"toTube"/i);
   assert.match(html, /href="\/youtube-mp3"/i);
@@ -46,7 +46,7 @@ for (const [pathname, title, heading] of landingPages) {
     const html = await response.text();
     assert.match(html, new RegExp(`<title>${title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "i"));
     assert.ok(html.includes(heading));
-    assert.match(html, new RegExp(`rel="canonical" href="https://clipmint-media\\.abdessamadahmali\\.chatgpt\\.site${pathname}`));
+    assert.match(html, new RegExp(`rel="canonical" href="https://totube\\.online${pathname}`));
     assert.match(html, /"@type":"FAQPage"/i);
     assert.match(html, /"@type":"BreadcrumbList"/i);
   });

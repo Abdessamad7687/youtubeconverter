@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "sans inscription",
       "X Twitter vidéo",
     ],
-    alternates: { canonical: "https://clipmint-media.abdessamadahmali.chatgpt.site/" },
+    alternates: { canonical: "https://totube.online/" },
     manifest: "/manifest.webmanifest",
     icons: {
       icon: [
@@ -71,14 +71,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     "@type": "WebSite",
     name: "toTube",
     alternateName: ["toTube Converter", "toTube MP3"],
-    url: "https://clipmint-media.abdessamadahmali.chatgpt.site/",
+    url: "https://totube.online/",
     inLanguage: "fr-FR",
   };
   const applicationSchema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "toTube",
-    url: "https://clipmint-media.abdessamadahmali.chatgpt.site/",
+    url: "https://totube.online/",
     applicationCategory: "MultimediaApplication",
     operatingSystem: "Web",
     description: "Convertisseur YouTube MP3 et MP4 gratuit et rapide.",
