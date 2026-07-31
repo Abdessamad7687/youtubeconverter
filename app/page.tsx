@@ -77,7 +77,7 @@ function AdBanner({ adKey, width, height }: AdBannerProps) {
           height={height}
           loading="lazy"
           referrerPolicy="origin"
-          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
           style={{ transform: `scale(${scale})` }}
         />
       </div>
