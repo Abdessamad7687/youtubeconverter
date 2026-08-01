@@ -1,9 +1,5 @@
-import { SeoLandingPage } from "../seo-landing";
-import { seoClusters } from "../seo-clusters";
+import { permanentRedirect } from "next/navigation";
 
-const definition = seoClusters["telecharger-video-youtube"];
-export const metadata = definition.metadata;
-
-export default function TelechargerVideoYoutubePage() {
-  return <SeoLandingPage content={definition.content} />;
+export default function LegacyYouTubePage() {
+  permanentRedirect("/fr/telecharger-video-youtube");
 }

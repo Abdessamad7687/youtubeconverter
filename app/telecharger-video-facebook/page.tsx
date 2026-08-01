@@ -1,9 +1,5 @@
-import { SeoLandingPage } from "../seo-landing";
-import { seoClusters } from "../seo-clusters";
+import { permanentRedirect } from "next/navigation";
 
-const definition = seoClusters["telecharger-video-facebook"];
-export const metadata = definition.metadata;
-
-export default function TelechargerVideoFacebookPage() {
-  return <SeoLandingPage content={definition.content} />;
+export default function LegacyFacebookPage() {
+  permanentRedirect("/fr/telecharger-video-facebook");
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { headers } from "next/headers";
+import { homeCopy, isLocale, Locale, locales } from "./i18n";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -44,7 +45,6 @@ export async function generateMetadata(): Promise<Metadata> {
       "télécharger vidéo Twitter",
       "téléchargeur vidéo en ligne",
     ],
-    alternates: { canonical: "https://totube.online/" },
     manifest: "/manifest.webmanifest",
     icons: {
       icon: [
@@ -70,14 +70,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const headerStore = await headers();
+  const requestedLocale = headerStore.get("x-totube-locale") || "fr";
+  const locale: Locale = isLocale(requestedLocale) ? requestedLocale : "fr";
+  const copy = homeCopy[locale];
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "toTube",
     alternateName: ["toTube Converter", "toTube MP3"],
     url: "https://totube.online/",
-    inLanguage: "fr-FR",
+    inLanguage: locales,
   };
   const applicationSchema = {
     "@context": "https://schema.org",
@@ -86,11 +90,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     url: "https://totube.online/",
     applicationCategory: "MultimediaApplication",
     operatingSystem: "Web",
-    description: "Convertisseur YouTube MP3 et MP4 gratuit et rapide.",
+    description: copy.metaDescription,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
   };
   return (
-    <html lang="fr">
+    <html lang={locale} dir={copy.dir}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(applicationSchema) }} />

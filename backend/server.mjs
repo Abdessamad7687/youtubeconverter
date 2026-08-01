@@ -23,6 +23,7 @@ const MAX_FILESIZE = process.env.MAX_FILESIZE || "500M";
 const FILE_TTL_MS = Number(process.env.FILE_TTL_MINUTES || 30) * 60_000;
 const MAX_CONCURRENT = Number(process.env.MAX_CONCURRENT_JOBS || 2);
 const RATE_LIMIT = Number(process.env.RATE_LIMIT_PER_HOUR || 12);
+const AUDIO_FORMATS = new Set(["mp3", "m4a", "wav", "aac", "flac", "opus"]);
 
 const allowedHosts = [
   "youtube.com", "youtu.be", "tiktok.com", "x.com", "twitter.com",
@@ -104,8 +105,8 @@ async function readJson(request) {
 
 function outputFormat(body) {
   if (body.downloadMode === "audio") {
-    if (body.audioFormat === "m4a") return "m4a";
-    return "mp3";
+    const requested = String(body.audioFormat || "mp3").toLowerCase();
+    return AUDIO_FORMATS.has(requested) ? requested : "mp3";
   }
   return "mp4";
 }
@@ -237,7 +238,7 @@ async function convert(request, body) {
     let filePath = printedPaths.reverse().find((line) => existsSync(line) && resolve(line).startsWith(`${jobDir}/`));
     if (!filePath) {
       const files = await readdir(jobDir);
-      const candidate = files.find((file) => [".mp3", ".m4a", ".mp4"].includes(extname(file).toLowerCase()));
+      const candidate = files.find((file) => [".mp3", ".m4a", ".mp4", ".wav", ".aac", ".flac", ".opus"].includes(extname(file).toLowerCase()));
       if (candidate) filePath = join(jobDir, candidate);
     }
     if (!filePath) throw new Error("La conversion n’a produit aucun fichier.");
@@ -268,7 +269,15 @@ async function serveFile(request, response, token) {
     return json(response, 404, { status: "error", error: { code: "file.expired" }, text: "Ce fichier a expiré." });
   }
   const ext = extname(job.filename).toLowerCase();
-  const types = { ".mp3": "audio/mpeg", ".m4a": "audio/mp4", ".mp4": "video/mp4" };
+  const types = {
+    ".mp3": "audio/mpeg",
+    ".m4a": "audio/mp4",
+    ".mp4": "video/mp4",
+    ".wav": "audio/wav",
+    ".aac": "audio/aac",
+    ".flac": "audio/flac",
+    ".opus": "audio/ogg",
+  };
   setCors(response);
   response.writeHead(200, {
     "Content-Type": types[ext] || "application/octet-stream",
@@ -302,7 +311,7 @@ const server = createServer(async (request, response) => {
       return json(response, 200, {
         cobalt: { version: "totube-1.0", url: publicBase(request), services: allowedHosts },
         status: "ready",
-        formats: ["mp3", "m4a", "mp4"],
+        formats: ["mp3", "m4a", "mp4", "wav", "aac", "flac", "opus"],
         activeJobs,
       });
     }

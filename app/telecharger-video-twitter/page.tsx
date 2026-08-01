@@ -1,9 +1,5 @@
-import { SeoLandingPage } from "../seo-landing";
-import { seoClusters } from "../seo-clusters";
+import { permanentRedirect } from "next/navigation";
 
-const definition = seoClusters["telecharger-video-twitter"];
-export const metadata = definition.metadata;
-
-export default function TelechargerVideoTwitterPage() {
-  return <SeoLandingPage content={definition.content} />;
+export default function LegacyTwitterPage() {
+  permanentRedirect("/fr/telecharger-video-twitter");
 }

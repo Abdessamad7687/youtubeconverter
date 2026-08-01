@@ -1,9 +1,5 @@
-import { SeoLandingPage } from "../seo-landing";
-import { seoClusters } from "../seo-clusters";
+import { permanentRedirect } from "next/navigation";
 
-const definition = seoClusters["telecharger-video-instagram"];
-export const metadata = definition.metadata;
-
-export default function TelechargerVideoInstagramPage() {
-  return <SeoLandingPage content={definition.content} />;
+export default function LegacyInstagramPage() {
+  permanentRedirect("/fr/telecharger-video-instagram");
 }

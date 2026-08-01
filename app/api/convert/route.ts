@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-type Format = "mp3" | "mp4" | "m4a";
+type Format = "mp3" | "mp4" | "m4a" | "wav" | "aac" | "flac" | "opus";
+
+const SUPPORTED_FORMATS: Format[] = ["mp3", "mp4", "m4a", "wav", "aac", "flac", "opus"];
 
 const YOUTUBE_HOSTS = new Set(["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "music.youtube.com"]);
-const DIRECT_EXTENSIONS = new Set(["mp3", "mp4", "m4a", "webm", "mov", "wav", "ogg"]);
+const DIRECT_EXTENSIONS = new Set(["mp3", "mp4", "m4a", "webm", "mov", "wav", "ogg", "aac", "flac", "opus"]);
 const PLATFORM_HOSTS = [
   { label: "TikTok", hosts: ["tiktok.com"] },
   { label: "Instagram", hosts: ["instagram.com", "instagr.am"] },
@@ -87,7 +89,7 @@ async function inspect(url: URL) {
 async function requestConverter(url: URL, format: Format) {
   const converterUrl = process.env.CONVERTER_API_URL?.trim();
   if (!converterUrl) {
-    throw new Error("La conversion audio MP3/M4A nécessite un serveur FFmpeg privé. Le téléchargement YouTube MP4 fonctionne déjà ; choisissez MP4 ou connectez le service audio.");
+    throw new Error("La conversion audio nécessite le service FFmpeg privé. Choisissez MP4 ou connectez le service de conversion.");
   }
 
   const headers: Record<string, string> = { "Content-Type": "application/json", Accept: "application/json" };
@@ -128,7 +130,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ media: await inspect(url) });
     }
     if (body.action !== "convert") return NextResponse.json({ error: "Action inconnue." }, { status: 400 });
-    if (!body.format || !["mp3", "mp4", "m4a"].includes(body.format)) {
+    if (!body.format || !SUPPORTED_FORMATS.includes(body.format)) {
       return NextResponse.json({ error: "Choisissez un format pris en charge." }, { status: 400 });
     }
 

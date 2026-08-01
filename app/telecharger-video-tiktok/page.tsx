@@ -1,9 +1,5 @@
-import { SeoLandingPage } from "../seo-landing";
-import { seoClusters } from "../seo-clusters";
+import { permanentRedirect } from "next/navigation";
 
-const definition = seoClusters["telecharger-video-tiktok"];
-export const metadata = definition.metadata;
-
-export default function TelechargerVideoTiktokPage() {
-  return <SeoLandingPage content={definition.content} />;
+export default function LegacyTikTokPage() {
+  permanentRedirect("/fr/telecharger-video-tiktok");
 }
