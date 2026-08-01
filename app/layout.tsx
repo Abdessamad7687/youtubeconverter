@@ -103,6 +103,17 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   };
   return (
     <html lang={locale} dir={copy.dir}>
+      <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GDL0WSR1P6" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-GDL0WSR1P6');`,
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(applicationSchema) }} />

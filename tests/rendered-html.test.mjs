@@ -52,6 +52,8 @@ test("server-renders an indexable, multilingual French homepage", async () => {
   assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
   assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
   assert.match(html, /sandbox="allow-same-origin allow-scripts/i);
+  assert.match(html, /googletagmanager\.com\/gtag\/js\?id=G-GDL0WSR1P6/i);
+  assert.match(html, /gtag\('config', 'G-GDL0WSR1P6'\)/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });
 
