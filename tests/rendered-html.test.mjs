@@ -104,6 +104,7 @@ test("publishes all localized topic pages in the sitemap", async () => {
   assert.equal((xml.match(/<url>/g) || []).length, 54);
   assert.match(xml, /https:\/\/totube\.online\/en\/youtube-to-mp3-320kbps/);
   assert.match(xml, /https:\/\/totube\.online\/fr\/youtube-mp4-1080p/);
+  assert.doesNotMatch(xml, /<lastmod>/, "lastmod must be omitted unless it reflects a real content update");
 });
 
 const landingPages = [
