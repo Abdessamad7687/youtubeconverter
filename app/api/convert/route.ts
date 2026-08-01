@@ -88,7 +88,7 @@ async function inspect(url: URL) {
   return { title, source: "Direct media" as const };
 }
 
-async function requestConverter(url: URL, format: Format, videoQuality: number, audioQuality: number) {
+async function requestConverter(url: URL, format: Format, videoQuality: number, audioQuality: number, clientIp: string) {
   const converterUrl = process.env.CONVERTER_API_URL?.trim();
   if (!converterUrl) {
     throw new Error("La conversion audio nécessite le service FFmpeg privé. Choisissez MP4 ou connectez le service de conversion.");
@@ -96,6 +96,7 @@ async function requestConverter(url: URL, format: Format, videoQuality: number, 
 
   const headers: Record<string, string> = { "Content-Type": "application/json", Accept: "application/json" };
   if (process.env.CONVERTER_API_KEY) headers.Authorization = `Api-Key ${process.env.CONVERTER_API_KEY}`;
+  if (clientIp) headers["X-Forwarded-For"] = clientIp;
 
   const response = await fetch(converterUrl, {
     method: "POST",
@@ -162,7 +163,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const converted = await requestConverter(url, body.format, videoQuality, audioQuality);
+    const clientIp = (request.headers.get("cf-connecting-ip") || request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for") || "").split(",")[0].trim();
+    const converted = await requestConverter(url, body.format, videoQuality, audioQuality, clientIp);
     return NextResponse.json({
       download: {
         url: converted.url,
