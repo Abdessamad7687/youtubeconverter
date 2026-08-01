@@ -30,6 +30,13 @@ type DownloadResult = { url: string; filename: string; note?: string };
 
 const SAMPLE_URL = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
 const SMARTLINK_URL = "https://www.effectivecpmnetwork.com/ajqxrtk2?key=e88c6ebfc5c63d06d4e955cce6e4d950";
+const platformPlaceholders = [
+  "https://tiktok.com/@creator/video/…",
+  "https://instagram.com/reel/…",
+  "https://facebook.com/watch/?v=…",
+  "https://x.com/creator/status/…",
+  "https://youtube.com/watch?v=…",
+];
 
 const formatDefinitions: { id: Format; label: string; note: string; icon: typeof FileAudio }[] = [
   { id: "mp3", label: "MP3", note: "Universal audio", icon: FileAudio },
@@ -48,6 +55,15 @@ const qualityCopy: Record<Locale, { title: string; video: string; audio: string;
   es: { title: "Elige la calidad", video: "Resolución de vídeo", audio: "Bitrate de audio", upTo: "Hasta", lossless: "Calidad sin pérdida automática" },
   pt: { title: "Escolha a qualidade", video: "Resolução do vídeo", audio: "Taxa de áudio", upTo: "Até", lossless: "Qualidade sem perdas automática" },
   de: { title: "Qualität auswählen", video: "Videoauflösung", audio: "Audio-Bitrate", upTo: "Bis zu", lossless: "Automatische verlustfreie Qualität" },
+};
+
+const platformHint: Record<Locale, string> = {
+  fr: "Liens acceptés : YouTube, TikTok, Instagram, Facebook et X",
+  en: "Accepted links: YouTube, TikTok, Instagram, Facebook and X",
+  ar: "الروابط المدعومة: YouTube وTikTok وInstagram وFacebook وX",
+  es: "Enlaces admitidos: YouTube, TikTok, Instagram, Facebook y X",
+  pt: "Links aceitos: YouTube, TikTok, Instagram, Facebook e X",
+  de: "Unterstützte Links: YouTube, TikTok, Instagram, Facebook und X",
 };
 
 const angleCopy: Record<Locale, { kicker: string; title: string; accent: string; intro: string; cta: string; cards: { title: string; text: string }[] }> = {
@@ -119,6 +135,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
   const [progress, setProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -126,6 +143,12 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
     const timer = window.setInterval(() => setProgress((current) => Math.min(current + (current < 58 ? 7 : 2), 88)), 250);
     return () => window.clearInterval(timer);
   }, [phase]);
+
+  useEffect(() => {
+    if (url || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => setPlaceholderIndex((current) => (current + 1) % platformPlaceholders.length), 2800);
+    return () => window.clearInterval(timer);
+  }, [url]);
 
   async function inspectMedia(candidate: string) {
     setPhase("inspecting");
@@ -233,11 +256,12 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
                   setUrl(event.target.value);
                   if (preview) { setPreview(null); setResult(null); setPhase("idle"); }
                   setError("");
-                }} placeholder="https://youtube.com/watch?v=…" autoComplete="url" />
+                }} placeholder={platformPlaceholders[placeholderIndex]} autoComplete="url" aria-describedby="media-platform-hint" />
                 {url && <button type="button" className="clear-button" onClick={reset} aria-label="Clear link"><X size={16} /></button>}
               </div>
               <button className="primary-button" disabled={phase === "inspecting" || phase === "converting"}>{buttonLabel} {phase === "inspecting" || phase === "converting" ? <span className="spinner" /> : <ArrowRight size={18} />}</button>
             </div>
+            <p className="platform-hint" id="media-platform-hint">{platformHint[locale]}</p>
             <button className="sample-link" type="button" onClick={loadSample}>{copy.sample} <ArrowRight size={13} /></button>
 
             {preview && phase !== "done" && (

@@ -39,6 +39,9 @@ test("server-renders an indexable, multilingual French homepage", async () => {
   assert.match(html, /<h1>Convertisseur vidéo/i);
   assert.match(html, /"@type":"WebSite","name":"toTube"/i);
   assert.match(html, /href="\/fr\/telecharger-video-tiktok"/i);
+  assert.match(html, /placeholder="https:\/\/tiktok\.com\/@creator\/video\/…"/i);
+  assert.match(html, /Liens acceptés : YouTube, TikTok, Instagram, Facebook et X/i);
+  assert.match(html, /aria-describedby="media-platform-hint"/i);
   assert.match(html, /href="\/fr\/youtube-mp3-320-kbps"/i);
   assert.match(html, /Choisissez la qualité/i);
   assert.match(html, /Nous vérifions le fichier/i);
