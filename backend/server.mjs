@@ -27,7 +27,9 @@ const RATE_LIMIT = Number(process.env.RATE_LIMIT_PER_HOUR || 12);
 const allowedHosts = [
   "youtube.com", "youtu.be", "tiktok.com", "x.com", "twitter.com",
   "instagram.com", "facebook.com", "twitch.tv", "soundcloud.com",
-  "dailymotion.com", "vimeo.com",
+  "dailymotion.com", "vimeo.com", "pinterest.com", "pin.it",
+  "snapchat.com", "linkedin.com", "reddit.com", "redd.it", "fb.watch",
+  "dai.ly", "instagr.am",
 ];
 const jobs = new Map();
 const rateBuckets = new Map();

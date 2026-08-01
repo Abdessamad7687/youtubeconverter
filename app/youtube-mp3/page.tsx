@@ -4,6 +4,7 @@ import { SeoLandingPage, type SeoPageContent } from "../seo-landing";
 export const metadata: Metadata = {
   title: "YouTube MP3 gratuit — Convertir YouTube en MP3 | toTube",
   description: "Convertissez une vidéo YouTube en MP3 gratuitement avec toTube. Un convertisseur YouTube MP3 rapide, simple et sans inscription.",
+  keywords: ["convertisseur youtube mp3", "youtube vers mp3 gratuit", "télécharger musique youtube", "meilleur convertisseur youtube mp3 2026"],
   alternates: { canonical: "https://totube.online/youtube-mp3" },
   openGraph: { title: "YouTube MP3 gratuit — toTube", description: "Transformez une vidéo YouTube autorisée en fichier MP3.", url: "/youtube-mp3" },
 };
@@ -23,6 +24,7 @@ const content: SeoPageContent = {
   sections: [
     { title: "Comment convertir YouTube en MP3 ?", paragraphs: ["Copiez l’adresse de la vidéo YouTube publique, ouvrez le convertisseur toTube et collez le lien dans le champ prévu. Après l’analyse, sélectionnez MP3 puis confirmez que vous disposez des droits nécessaires.", "Le backend extrait la piste audio et l’encode réellement en MP3. Le résultat n’est pas une vidéo simplement renommée : c’est un fichier audio valide avec une excellente compatibilité."] },
     { title: "Pourquoi choisir le format MP3 ?", paragraphs: ["Le MP3 offre un bon équilibre entre qualité, taille et compatibilité. Il convient aux interviews, cours, podcasts, mémos et autres contenus parlés que vous êtes autorisé à conserver.", "Pour une meilleure efficacité audio, le format M4A est aussi disponible. Si vous souhaitez conserver l’image, choisissez plutôt le convertisseur YouTube MP4."] },
+    { title: "Choisir un convertisseur YouTube MP3 en 2026", paragraphs: ["Un bon convertisseur doit produire une véritable piste MP3, annoncer ses limites et fonctionner sans faux bouton de téléchargement. toTube utilise FFmpeg pour encoder l’audio et vérifie que le fichier final existe avant de le proposer.", "Télécharger une musique YouTube reste soumis aux droits du créateur et aux conditions de la plateforme. Utilisez cette fonction pour vos propres créations, les licences compatibles ou les contenus pour lesquels vous avez reçu une autorisation."] },
   ],
   faqs: [
     { question: "Le convertisseur YouTube MP3 est-il gratuit ?", answer: "Oui. toTube permet de préparer un MP3 sans inscription. Des limites raisonnables protègent la disponibilité du service." },

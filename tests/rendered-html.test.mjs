@@ -3,15 +3,19 @@ import test from "node:test";
 
 const workerUrl = new URL("../dist/server/index.js", import.meta.url);
 
-async function render(pathname = "/") {
+async function request(pathname = "/", init = {}) {
   const moduleUrl = new URL(workerUrl);
   moduleUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${pathname}`);
   const { default: worker } = await import(moduleUrl.href);
   return worker.fetch(
-    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html", ...init.headers }, ...init }),
     { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
     { waitUntil() {}, passThroughOnException() {} },
   );
+}
+
+async function render(pathname = "/") {
+  return request(pathname);
 }
 
 test("server-renders an indexable, keyword-focused homepage", async () => {
@@ -40,6 +44,13 @@ const landingPages = [
   ["/youtube-mp4", "YouTube MP4 —", "<h1>YouTube MP4"],
   ["/convertisseur-mp3", "Convertisseur MP3 gratuit", "<h1>Convertisseur MP3"],
   ["/alternative-notube", "Alternative à noTube", "<h1>Une alternative à noTube"],
+  ["/telecharger-video-youtube", "Télécharger une vidéo YouTube", "<h1>Télécharger une vidéo YouTube"],
+  ["/telecharger-video-tiktok", "Télécharger une vidéo TikTok", "<h1>Télécharger une vidéo TikTok"],
+  ["/telecharger-video-instagram", "Télécharger une vidéo ou un Reel Instagram", "<h1>Télécharger une vidéo Instagram"],
+  ["/telecharger-video-facebook", "Télécharger une vidéo Facebook", "<h1>Télécharger une vidéo Facebook"],
+  ["/telecharger-video-twitter", "Télécharger une vidéo Twitter / X", "<h1>Télécharger une vidéo Twitter / X"],
+  ["/telecharger-video-autres-plateformes", "Télécharger une vidéo Vimeo", "<h1>Télécharger une vidéo en ligne"],
+  ["/meilleur-telechargeur-video", "Meilleur téléchargeur vidéo", "<h1>Choisir le meilleur téléchargeur vidéo"],
 ];
 
 for (const [pathname, title, heading] of landingPages) {
@@ -54,3 +65,15 @@ for (const [pathname, title, heading] of landingPages) {
     assert.match(html, /"@type":"BreadcrumbList"/i);
   });
 }
+
+test("recognizes supported public social-media links before conversion", async () => {
+  const response = await request("/api/convert", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action: "inspect", url: "https://www.tiktok.com/@creator/video/123456789" }),
+  });
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  assert.equal(data.media.source, "TikTok");
+  assert.equal(data.media.title, "Média TikTok");
+});

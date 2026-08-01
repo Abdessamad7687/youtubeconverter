@@ -11,15 +11,15 @@ export type SeoPageContent = {
   sections: { title: string; paragraphs: string[] }[];
   benefits: { title: string; text: string; kind: "audio" | "video" | "speed" | "safe" }[];
   faqs: { question: string; answer: string }[];
+  related?: { href: string; label: string; text: string }[];
 };
 
 const siteUrl = "https://totube.online";
 
-const relatedPages = [
+const defaultRelatedPages = [
   { href: "/youtube-mp3", label: "YouTube MP3", text: "Extraire un fichier audio MP3 depuis une vidéo autorisée." },
   { href: "/youtube-mp4", label: "YouTube MP4", text: "Télécharger une vidéo MP4 compatible H.264 et AAC." },
-  { href: "/convertisseur-mp3", label: "Convertisseur MP3", text: "Comprendre et choisir le meilleur format audio." },
-  { href: "/alternative-notube", label: "Alternative à noTube", text: "Découvrir une expérience de conversion simple et responsable." },
+  { href: "/meilleur-telechargeur-video", label: "Téléchargeur vidéo", text: "Comparer les formats et les plateformes prises en charge." },
 ];
 
 function BenefitIcon({ kind }: { kind: SeoPageContent["benefits"][number]["kind"] }) {
@@ -101,7 +101,7 @@ export function SeoLandingPage({ content }: { content: SeoPageContent }) {
       <section className="related-section">
         <span className="section-kicker">Continuer</span><h2>Choisissez votre convertisseur</h2>
         <div>
-          {relatedPages.filter((page) => page.href !== `/${content.slug}`).map((page) => (
+          {(content.related || defaultRelatedPages).filter((page) => page.href !== `/${content.slug}`).map((page) => (
             <Link href={page.href} key={page.href}><strong>{page.label}</strong><p>{page.text}</p><ArrowRight size={17} /></Link>
           ))}
         </div>

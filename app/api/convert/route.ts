@@ -4,6 +4,18 @@ type Format = "mp3" | "mp4" | "m4a";
 
 const YOUTUBE_HOSTS = new Set(["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "music.youtube.com"]);
 const DIRECT_EXTENSIONS = new Set(["mp3", "mp4", "m4a", "webm", "mov", "wav", "ogg"]);
+const PLATFORM_HOSTS = [
+  { label: "TikTok", hosts: ["tiktok.com"] },
+  { label: "Instagram", hosts: ["instagram.com", "instagr.am"] },
+  { label: "Facebook", hosts: ["facebook.com", "fb.watch"] },
+  { label: "X / Twitter", hosts: ["x.com", "twitter.com"] },
+  { label: "Vimeo", hosts: ["vimeo.com"] },
+  { label: "Dailymotion", hosts: ["dailymotion.com", "dai.ly"] },
+  { label: "Reddit", hosts: ["reddit.com", "redd.it"] },
+  { label: "Pinterest", hosts: ["pinterest.com", "pin.it"] },
+  { label: "Snapchat", hosts: ["snapchat.com"] },
+  { label: "LinkedIn", hosts: ["linkedin.com"] },
+];
 
 function parseMediaUrl(input: unknown) {
   if (typeof input !== "string" || input.length > 2048) throw new Error("Collez un lien vidéo valide.");
@@ -19,6 +31,11 @@ function parseMediaUrl(input: unknown) {
 
 function isYouTube(url: URL) {
   return YOUTUBE_HOSTS.has(url.hostname.toLowerCase());
+}
+
+function platformFor(url: URL) {
+  const host = url.hostname.toLowerCase().replace(/^www\./, "");
+  return PLATFORM_HOSTS.find((platform) => platform.hosts.some((allowed) => host === allowed || host.endsWith(`.${allowed}`)));
 }
 
 function directExtension(url: URL) {
@@ -52,8 +69,16 @@ async function inspect(url: URL) {
     };
   }
 
+  const platform = platformFor(url);
+  if (platform) {
+    return {
+      title: `Média ${platform.label}`,
+      source: platform.label,
+    };
+  }
+
   const extension = directExtension(url);
-  if (!extension) throw new Error("Utilisez un lien YouTube public ou un lien direct MP3, MP4, M4A, WEBM, MOV, WAV ou OGG.");
+  if (!extension) throw new Error("Cette plateforme ou ce type de lien n’est pas encore pris en charge.");
   const rawName = decodeURIComponent(url.pathname.split("/").pop() || "Media file").replace(/\.[^.]+$/, "");
   const title = rawName.replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
   return { title, source: "Direct media" as const };

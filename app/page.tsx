@@ -29,7 +29,7 @@ type MediaPreview = {
   title: string;
   author?: string;
   thumbnail?: string;
-  source: "YouTube" | "Direct media";
+  source: string;
 };
 
 type DownloadResult = {
@@ -94,7 +94,7 @@ const formats: { id: Format; label: string; note: string; icon: typeof FileAudio
 const faqs = [
   {
     q: "Quels liens puis-je utiliser ?",
-    a: "toTube accepte les liens YouTube publics et les liens directs vers des médias. Téléchargez uniquement les contenus que vous avez créés ou que vous êtes autorisé à utiliser.",
+    a: "toTube accepte les liens publics YouTube, TikTok, Instagram, Facebook, X, Vimeo, Dailymotion et plusieurs autres plateformes, ainsi que les liens directs vers des médias. Téléchargez uniquement les contenus que vous êtes autorisé à utiliser.",
   },
   {
     q: "toTube conserve-t-il mes fichiers ?",
@@ -430,7 +430,8 @@ export default function Home() {
       <footer>
         <div className="footer-main">
           <div><a href="#top" className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></a><p>Convertisseur vidéo rapide pour les contenus que vous êtes autorisé à télécharger.</p></div>
-          <div><strong>Convertisseurs</strong><a href="/youtube-mp3">YouTube MP3</a><a href="/youtube-mp4">YouTube MP4</a><a href="/convertisseur-mp3">Convertisseur MP3</a><a href="/alternative-notube">Alternative à noTube</a></div>
+          <div><strong>YouTube</strong><a href="/telecharger-video-youtube">Télécharger une vidéo</a><a href="/youtube-mp3">YouTube MP3</a><a href="/youtube-mp4">YouTube MP4</a><a href="/convertisseur-mp3">Convertisseur MP3</a></div>
+          <div><strong>Plateformes</strong><a href="/telecharger-video-tiktok">TikTok</a><a href="/telecharger-video-instagram">Instagram</a><a href="/telecharger-video-facebook">Facebook</a><a href="/telecharger-video-twitter">Twitter / X</a><a href="/telecharger-video-autres-plateformes">Autres plateformes</a></div>
           <div><strong>Principes</strong><span>Utilisation autorisée</span><span>Confidentiel par défaut</span><span>Sans inscription</span></div>
         </div>
         <div className="footer-bottom"><span>© 2026 toTube</span><span>Conçu pour les créateurs responsables.</span></div>
