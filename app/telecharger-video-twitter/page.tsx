@@ -1,5 +1,5 @@
 import { permanentRedirect } from "next/navigation";
 
 export default function LegacyTwitterPage() {
-  permanentRedirect("/fr/telecharger-video-twitter");
+  permanentRedirect("https://totube.online/fr/telecharger-video-twitter");
 }

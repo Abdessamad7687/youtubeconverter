@@ -1,5 +1,5 @@
 import { permanentRedirect } from "next/navigation";
 
 export default function LegacyInstagramPage() {
-  permanentRedirect("/fr/telecharger-video-instagram");
+  permanentRedirect("https://totube.online/fr/telecharger-video-instagram");
 }

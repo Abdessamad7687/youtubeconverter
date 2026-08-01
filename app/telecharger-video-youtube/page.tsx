@@ -1,5 +1,5 @@
 import { permanentRedirect } from "next/navigation";
 
 export default function LegacyYouTubePage() {
-  permanentRedirect("/fr/telecharger-video-youtube");
+  permanentRedirect("https://totube.online/fr/telecharger-video-youtube");
 }

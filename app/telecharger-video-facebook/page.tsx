@@ -1,5 +1,5 @@
 import { permanentRedirect } from "next/navigation";
 
 export default function LegacyFacebookPage() {
-  permanentRedirect("/fr/telecharger-video-facebook");
+  permanentRedirect("https://totube.online/fr/telecharger-video-facebook");
 }
