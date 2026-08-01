@@ -21,6 +21,15 @@ const PLATFORM_HOSTS = [
   { label: "LinkedIn", hosts: ["linkedin.com"] },
 ];
 
+class ConverterRequestError extends Error {
+  code: string;
+
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
 function parseMediaUrl(input: unknown) {
   if (typeof input !== "string" || input.length > 2048) throw new Error("Collez un lien vidéo valide.");
   let parsed: URL;
@@ -119,7 +128,7 @@ async function requestConverter(url: URL, format: Format, videoQuality: number, 
     text?: string;
   };
   if (!response.ok || data.status === "error") {
-    throw new Error(data.text || data.error?.code || "Le serveur de conversion n’a pas pu préparer ce lien.");
+    throw new ConverterRequestError(data.error?.code || "conversion.failed", data.text || "Le serveur de conversion n’a pas pu préparer ce lien.");
   }
   const downloadUrl = data.url || data.picker?.[0]?.url;
   if (!downloadUrl) throw new Error("La conversion s’est terminée sans fichier téléchargeable.");
@@ -176,6 +185,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (caught) {
     const message = caught instanceof Error ? caught.message : "Une erreur est survenue pendant le traitement du lien.";
-    return NextResponse.json({ error: message }, { status: 422 });
+    const code = caught instanceof ConverterRequestError ? caught.code : "conversion.failed";
+    return NextResponse.json({ error: message, code }, { status: 422 });
   }
 }

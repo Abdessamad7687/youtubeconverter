@@ -15,6 +15,7 @@ import {
   Play,
   ShieldCheck,
   Sparkles,
+  UploadCloud,
   WandSparkles,
   X,
   Zap,
@@ -64,6 +65,15 @@ const platformHint: Record<Locale, string> = {
   es: "Enlaces admitidos: YouTube, TikTok, Instagram, Facebook y X",
   pt: "Links aceitos: YouTube, TikTok, Instagram, Facebook e X",
   de: "Unterstützte Links: YouTube, TikTok, Instagram, Facebook und X",
+};
+
+const uploadCopy: Record<Locale, { title: string; text: string; button: string; limit: string }> = {
+  fr: { title: "YouTube demande une authentification", text: "Téléversez un fichier que vous êtes autorisé à utiliser : toTube le convertira et vérifiera le résultat.", button: "Choisir un fichier", limit: "MP4, MOV, WEBM, MKV ou audio — 250 Mo maximum" },
+  en: { title: "YouTube requires authentication", text: "Upload a file you are authorized to use. toTube will convert it and verify the result.", button: "Choose a file", limit: "MP4, MOV, WEBM, MKV or audio — 250 MB maximum" },
+  ar: { title: "يتطلب YouTube تسجيل الدخول", text: "ارفع ملفاً مصرحاً لك باستخدامه وسيقوم toTube بتحويله والتحقق منه.", button: "اختر ملفاً", limit: "MP4 أو MOV أو WEBM أو MKV أو صوت — بحد أقصى 250 ميغابايت" },
+  es: { title: "YouTube requiere autenticación", text: "Sube un archivo que tengas autorización para usar. toTube lo convertirá y verificará.", button: "Elegir un archivo", limit: "MP4, MOV, WEBM, MKV o audio — máximo 250 MB" },
+  pt: { title: "O YouTube exige autenticação", text: "Envie um arquivo que você tenha autorização para usar. O toTube irá convertê-lo e verificá-lo.", button: "Escolher arquivo", limit: "MP4, MOV, WEBM, MKV ou áudio — máximo de 250 MB" },
+  de: { title: "YouTube verlangt eine Anmeldung", text: "Lade eine Datei hoch, die du verwenden darfst. toTube konvertiert und überprüft sie.", button: "Datei auswählen", limit: "MP4, MOV, WEBM, MKV oder Audio — maximal 250 MB" },
 };
 
 const angleCopy: Record<Locale, { kicker: string; title: string; accent: string; intro: string; cta: string; cards: { title: string; text: string }[] }> = {
@@ -136,7 +146,9 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [youtubeBlocked, setYoutubeBlocked] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (phase !== "converting") return;
@@ -153,6 +165,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
   async function inspectMedia(candidate: string) {
     setPhase("inspecting");
     setError("");
+    setYoutubeBlocked(false);
     setPreview(null);
     setResult(null);
     try {
@@ -195,6 +208,37 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "convert", url: candidate, format, videoQuality, audioQuality }),
       });
+      const data = (await response.json()) as { download?: DownloadResult; error?: string; code?: string };
+      if (!response.ok || !data.download) {
+        if (data.code === "youtube.authentication_required") setYoutubeBlocked(true);
+        throw new Error(data.error || copy.errors.convert);
+      }
+      setProgress(100);
+      setResult(data.download);
+      window.setTimeout(() => setPhase("done"), 300);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : copy.errors.convert);
+      setPhase("error");
+    }
+  }
+
+  async function uploadFile(file: File) {
+    setPhase("converting");
+    setError("");
+    setResult(null);
+    setProgress(12);
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+          "X-File-Name": encodeURIComponent(file.name),
+          "X-Output-Format": format,
+          "X-Video-Quality": String(videoQuality),
+          "X-Audio-Quality": String(audioQuality),
+        },
+        body: file,
+      });
       const data = (await response.json()) as { download?: DownloadResult; error?: string };
       if (!response.ok || !data.download) throw new Error(data.error || copy.errors.convert);
       setProgress(100);
@@ -207,12 +251,12 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
   }
 
   function reset() {
-    setUrl(""); setPreview(null); setResult(null); setError(""); setProgress(0); setPhase("idle");
+    setUrl(""); setPreview(null); setResult(null); setError(""); setProgress(0); setPhase("idle"); setYoutubeBlocked(false);
     window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
   function loadSample() {
-    setUrl(SAMPLE_URL); setFormat("mp4"); setPreview(null); setResult(null); setError(""); setPhase("idle");
+    setUrl(SAMPLE_URL); setFormat("mp4"); setPreview(null); setResult(null); setError(""); setPhase("idle"); setYoutubeBlocked(false);
     window.setTimeout(() => inspectMedia(SAMPLE_URL), 0);
   }
 
@@ -256,6 +300,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
                   setUrl(event.target.value);
                   if (preview) { setPreview(null); setResult(null); setPhase("idle"); }
                   setError("");
+                  setYoutubeBlocked(false);
                 }} placeholder={platformPlaceholders[placeholderIndex]} autoComplete="url" aria-describedby="media-platform-hint" />
                 {url && <button type="button" className="clear-button" onClick={reset} aria-label="Clear link"><X size={16} /></button>}
               </div>
@@ -317,6 +362,22 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
               <button type="button" onClick={reset}>{copy.another}</button>
             </div>}
             {error && <div className="error-message" role="alert"><span>!</span>{error}</div>}
+            {youtubeBlocked && phase !== "done" && <div className="upload-fallback">
+              <span className="upload-fallback-icon"><UploadCloud size={22} /></span>
+              <div><strong>{uploadCopy[locale].title}</strong><p>{uploadCopy[locale].text}</p><small>{uploadCopy[locale].limit}</small></div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                hidden
+                accept="video/mp4,video/quicktime,video/webm,video/x-matroska,audio/mpeg,audio/mp4,audio/wav,audio/aac,audio/flac,audio/ogg,.mkv,.opus"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void uploadFile(file);
+                  event.target.value = "";
+                }}
+              />
+              <button type="button" onClick={() => fileInputRef.current?.click()} disabled={phase === "converting"}><UploadCloud size={16} /> {uploadCopy[locale].button}</button>
+            </div>}
           </form>
         </div>
 
