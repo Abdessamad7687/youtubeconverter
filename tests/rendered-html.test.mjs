@@ -39,6 +39,11 @@ test("server-renders an indexable, multilingual French homepage", async () => {
   assert.match(html, /<h1>Convertisseur vidéo/i);
   assert.match(html, /"@type":"WebSite","name":"toTube"/i);
   assert.match(html, /href="\/fr\/telecharger-video-tiktok"/i);
+  assert.match(html, /href="\/fr\/youtube-mp3-320-kbps"/i);
+  assert.match(html, /Choisissez la qualité/i);
+  assert.match(html, /Nous vérifions le fichier/i);
+  assert.match(html, /"@type":"FAQPage"/i);
+  assert.match(html, /FFprobe output validation/i);
   assert.match(html, /FLAC/);
   assert.match(html, /OPUS/);
   assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
@@ -65,6 +70,38 @@ for (const [pathname, lang, heading] of localizedHomes) {
     assert.match(html, new RegExp(`rel="canonical" href="https://totube\\.online${pathname}`));
   });
 }
+
+const localizedQualityPages = [
+  ["/fr/youtube-mp3-320-kbps", "fr", "YouTube MP3 320 kbps"],
+  ["/en/youtube-to-mp4-1080p", "en", "YouTube to MP4 1080p"],
+  ["/ar/youtube-mp3-320kbps", "ar", "YouTube إلى MP3 320 kbps"],
+  ["/es/youtube-mp4-1080p", "es", "YouTube a MP4 1080p"],
+  ["/pt/youtube-mp3-320-kbps", "pt", "YouTube para MP3 320 kbps"],
+  ["/de/youtube-mp4-1080p", "de", "YouTube zu MP4 1080p"],
+];
+
+for (const [pathname, lang, heading] of localizedQualityPages) {
+  test(`renders quality-intent SEO page ${pathname}`, async () => {
+    const response = await render(pathname);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, new RegExp(`<html lang="${lang}"`));
+    assert.ok(html.includes(`<h1>${heading}`));
+    assert.match(html, new RegExp(`rel="canonical" href="https://totube\\.online${pathname}`));
+    assert.match(html, /hreflang="x-default"/i);
+    assert.match(html, /"@type":"FAQPage"/i);
+    assert.match(html, /"@type":"BreadcrumbList"/i);
+  });
+}
+
+test("publishes all localized topic pages in the sitemap", async () => {
+  const response = await request("/sitemap.xml");
+  assert.equal(response.status, 200);
+  const xml = await response.text();
+  assert.equal((xml.match(/<url>/g) || []).length, 54);
+  assert.match(xml, /https:\/\/totube\.online\/en\/youtube-to-mp3-320kbps/);
+  assert.match(xml, /https:\/\/totube\.online\/fr\/youtube-mp4-1080p/);
+});
 
 const landingPages = [
   ["/youtube-mp3", "YouTube MP3 gratuit", "<h1>YouTube MP3"],

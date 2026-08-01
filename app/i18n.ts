@@ -3,6 +3,8 @@ export type Locale = (typeof locales)[number];
 
 export const platformIds = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
 export type PlatformId = (typeof platformIds)[number];
+export const qualityPageIds = ["youtube-mp3-320", "youtube-mp4-1080"] as const;
+export type QualityPageId = (typeof qualityPageIds)[number];
 
 export type HomeCopy = {
   language: string;
@@ -109,6 +111,15 @@ export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
     facebook: "facebook-video-herunterladen",
     twitter: "twitter-video-herunterladen",
   },
+};
+
+export const localizedQualitySlugs: Record<Locale, Record<QualityPageId, string>> = {
+  fr: { "youtube-mp3-320": "youtube-mp3-320-kbps", "youtube-mp4-1080": "youtube-mp4-1080p" },
+  en: { "youtube-mp3-320": "youtube-to-mp3-320kbps", "youtube-mp4-1080": "youtube-to-mp4-1080p" },
+  ar: { "youtube-mp3-320": "youtube-mp3-320kbps", "youtube-mp4-1080": "youtube-mp4-1080p" },
+  es: { "youtube-mp3-320": "youtube-mp3-320-kbps", "youtube-mp4-1080": "youtube-mp4-1080p" },
+  pt: { "youtube-mp3-320": "youtube-mp3-320-kbps", "youtube-mp4-1080": "youtube-mp4-1080p" },
+  de: { "youtube-mp3-320": "youtube-mp3-320-kbps", "youtube-mp4-1080": "youtube-mp4-1080p" },
 };
 
 export const homeCopy: Record<Locale, HomeCopy> = {
@@ -251,6 +262,10 @@ export function platformForSlug(locale: Locale, slug: string): PlatformId | null
   return platformIds.find((platform) => localizedSlugs[locale][platform] === slug) || null;
 }
 
+export function qualityPageForSlug(locale: Locale, slug: string): QualityPageId | null {
+  return qualityPageIds.find((page) => localizedQualitySlugs[locale][page] === slug) || null;
+}
+
 export function localeHome(locale: Locale) {
   return `/${locale}`;
 }
@@ -259,9 +274,20 @@ export function platformPath(locale: Locale, platform: PlatformId) {
   return `/${locale}/${localizedSlugs[locale][platform]}`;
 }
 
+export function qualityPagePath(locale: Locale, page: QualityPageId) {
+  return `/${locale}/${localizedQualitySlugs[locale][page]}`;
+}
+
 export function languageAlternates(platform?: PlatformId) {
   return Object.fromEntries([
     ...locales.map((locale) => [locale, `https://totube.online${platform ? platformPath(locale, platform) : localeHome(locale)}`]),
     ["x-default", `https://totube.online${platform ? platformPath("en", platform) : localeHome("en")}`],
+  ]);
+}
+
+export function qualityLanguageAlternates(page: QualityPageId) {
+  return Object.fromEntries([
+    ...locales.map((locale) => [locale, `https://totube.online${qualityPagePath(locale, page)}`]),
+    ["x-default", `https://totube.online${qualityPagePath("en", page)}`],
   ]);
 }

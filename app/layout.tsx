@@ -91,6 +91,14 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     applicationCategory: "MultimediaApplication",
     operatingSystem: "Web",
     description: copy.metaDescription,
+    browserRequirements: "Requires JavaScript and a modern web browser",
+    featureList: [
+      "YouTube, TikTok, Instagram, Facebook and X public-link conversion",
+      "MP4 resolution selection from 360p to 1080p",
+      "Audio bitrate selection from 128 to 320 kbps",
+      "MP3, MP4, M4A, WAV, AAC, FLAC and OPUS output",
+      "FFprobe output validation",
+    ],
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
   };
   return (

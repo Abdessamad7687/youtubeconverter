@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 type Format = "mp3" | "mp4" | "m4a" | "wav" | "aac" | "flac" | "opus";
 
 const SUPPORTED_FORMATS: Format[] = ["mp3", "mp4", "m4a", "wav", "aac", "flac", "opus"];
+const VIDEO_QUALITIES = [360, 480, 720, 1080] as const;
+const AUDIO_QUALITIES = [128, 192, 256, 320] as const;
 
 const YOUTUBE_HOSTS = new Set(["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "music.youtube.com"]);
 const DIRECT_EXTENSIONS = new Set(["mp3", "mp4", "m4a", "webm", "mov", "wav", "ogg", "aac", "flac", "opus"]);
@@ -86,7 +88,7 @@ async function inspect(url: URL) {
   return { title, source: "Direct media" as const };
 }
 
-async function requestConverter(url: URL, format: Format) {
+async function requestConverter(url: URL, format: Format, videoQuality: number, audioQuality: number) {
   const converterUrl = process.env.CONVERTER_API_URL?.trim();
   if (!converterUrl) {
     throw new Error("La conversion audio nécessite le service FFmpeg privé. Choisissez MP4 ou connectez le service de conversion.");
@@ -102,7 +104,8 @@ async function requestConverter(url: URL, format: Format) {
       url: url.toString(),
       downloadMode: format === "mp4" ? "auto" : "audio",
       audioFormat: format === "mp4" ? "best" : format,
-      videoQuality: "1080",
+      videoQuality: String(videoQuality),
+      audioQuality: String(audioQuality),
       filenameStyle: "pretty",
     }),
   });
@@ -124,7 +127,7 @@ async function requestConverter(url: URL, format: Format) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as { action?: string; url?: unknown; format?: Format };
+    const body = (await request.json()) as { action?: string; url?: unknown; format?: Format; videoQuality?: number; audioQuality?: number };
     const url = parseMediaUrl(body.url);
     if (body.action === "inspect") {
       return NextResponse.json({ media: await inspect(url) });
@@ -133,6 +136,8 @@ export async function POST(request: NextRequest) {
     if (!body.format || !SUPPORTED_FORMATS.includes(body.format)) {
       return NextResponse.json({ error: "Choisissez un format pris en charge." }, { status: 400 });
     }
+    const videoQuality = VIDEO_QUALITIES.includes(body.videoQuality as (typeof VIDEO_QUALITIES)[number]) ? Number(body.videoQuality) : 1080;
+    const audioQuality = AUDIO_QUALITIES.includes(body.audioQuality as (typeof AUDIO_QUALITIES)[number]) ? Number(body.audioQuality) : 320;
 
     const media = await inspect(url);
     const extension = directExtension(url);
@@ -157,12 +162,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const converted = await requestConverter(url, body.format);
+    const converted = await requestConverter(url, body.format, videoQuality, audioQuality);
     return NextResponse.json({
       download: {
         url: converted.url,
         filename: converted.filename || safeFilename(media.title, body.format),
-        note: `Fichier ${body.format.toUpperCase()} prêt`,
+        note: body.format === "mp4"
+          ? `MP4 compatible jusqu’à ${videoQuality}p, fichier vérifié`
+          : `${body.format.toUpperCase()} ${["wav", "flac"].includes(body.format) ? "sans perte" : `${audioQuality} kbps`}, fichier vérifié`,
       },
     });
   } catch (caught) {

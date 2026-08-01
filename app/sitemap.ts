@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { languageAlternates, locales, platformIds, platformPath } from "./i18n";
+import { languageAlternates, locales, platformIds, platformPath, qualityLanguageAlternates, qualityPageIds, qualityPagePath } from "./i18n";
 
 const siteUrl = "https://totube.online";
 
@@ -19,10 +19,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: platform === "youtube" ? 0.9 : 0.8,
     alternates: { languages: languageAlternates(platform) },
   })));
+  const localizedQualityPages: MetadataRoute.Sitemap = locales.flatMap((locale) => qualityPageIds.map((page) => ({
+    url: `${siteUrl}${qualityPagePath(locale, page)}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+    alternates: { languages: qualityLanguageAlternates(page) },
+  })));
 
   return [
     ...localizedHomes,
     ...localizedPlatforms,
+    ...localizedQualityPages,
     { url: `${siteUrl}/youtube-mp3`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/youtube-mp4`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/convertisseur-mp3`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },

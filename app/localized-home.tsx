@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { homeCopy, Locale, locales, localizedSlugs, platformIds, platformNames, platformPath } from "./i18n";
+import { homeCopy, Locale, locales, localizedSlugs, platformIds, platformNames, platformPath, qualityPagePath } from "./i18n";
 
 export type Format = "mp3" | "mp4" | "m4a" | "wav" | "aac" | "flac" | "opus";
 type Phase = "idle" | "inspecting" | "ready" | "converting" | "done" | "error";
@@ -40,6 +40,24 @@ const formatDefinitions: { id: Format; label: string; note: string; icon: typeof
   { id: "flac", label: "FLAC", note: "Lossless audio", icon: FileAudio },
   { id: "opus", label: "OPUS", note: "Modern audio", icon: FileAudio },
 ];
+
+const qualityCopy: Record<Locale, { title: string; video: string; audio: string; upTo: string; lossless: string }> = {
+  fr: { title: "Choisissez la qualité", video: "Résolution vidéo", audio: "Débit audio", upTo: "Jusqu’à", lossless: "Qualité sans perte automatique" },
+  en: { title: "Choose quality", video: "Video resolution", audio: "Audio bitrate", upTo: "Up to", lossless: "Automatic lossless quality" },
+  ar: { title: "اختر الجودة", video: "دقة الفيديو", audio: "معدل الصوت", upTo: "حتى", lossless: "جودة بدون فقدان تلقائياً" },
+  es: { title: "Elige la calidad", video: "Resolución de vídeo", audio: "Bitrate de audio", upTo: "Hasta", lossless: "Calidad sin pérdida automática" },
+  pt: { title: "Escolha a qualidade", video: "Resolução do vídeo", audio: "Taxa de áudio", upTo: "Até", lossless: "Qualidade sem perdas automática" },
+  de: { title: "Qualität auswählen", video: "Videoauflösung", audio: "Audio-Bitrate", upTo: "Bis zu", lossless: "Automatische verlustfreie Qualität" },
+};
+
+const angleCopy: Record<Locale, { kicker: string; title: string; accent: string; intro: string; cta: string; cards: { title: string; text: string }[] }> = {
+  fr: { kicker: "La différence toTube", title: "Choisissez la qualité.", accent: "Nous vérifions le fichier.", intro: "Pas de promesse 4K fictive ni d’extension simplement renommée : toTube annonce ses limites et contrôle le média généré avant de proposer le téléchargement.", cta: "Tester le convertisseur", cards: [{ title: "MP4 compatible", text: "Contrôle H.264, AAC et yuv420p pour une lecture fiable sur téléphone, TV et ordinateur." }, { title: "Audio vérifié", text: "FFprobe confirme la présence du codec attendu dans chaque MP3, M4A, WAV, AAC, FLAC ou OPUS." }, { title: "Qualité choisie", text: "Sélectionnez jusqu’à 1080p en vidéo ou 128 à 320 kbps pour les formats audio compressés." }, { title: "Limites transparentes", text: "Liens publics, durée et qualité maximale sont annoncés clairement, sans prétendre accéder aux médias privés." }] },
+  en: { kicker: "The toTube difference", title: "You choose the quality.", accent: "We verify the file.", intro: "No fictional 4K promise and no renamed extensions: toTube states its limits and checks the generated media before offering the download.", cta: "Try the converter", cards: [{ title: "Compatible MP4", text: "H.264, AAC and yuv420p checks for reliable playback on phones, TVs and computers." }, { title: "Verified audio", text: "FFprobe confirms the expected codec in every MP3, M4A, WAV, AAC, FLAC or OPUS file." }, { title: "Selected quality", text: "Choose video up to 1080p or 128 to 320 kbps for compressed audio formats." }, { title: "Clear limits", text: "Public links, duration and maximum quality are stated plainly, with no claim to access private media." }] },
+  ar: { kicker: "ميزة toTube", title: "أنت تختار الجودة.", accent: "ونحن نتحقق من الملف.", intro: "لا وعود 4K وهمية ولا تغيير لامتداد الملف فقط: يوضح toTube حدوده ويفحص الوسائط قبل إتاحة التنزيل.", cta: "جرّب المحول", cards: [{ title: "MP4 متوافق", text: "فحص H.264 وAAC وyuv420p لتشغيل موثوق على الهاتف والتلفاز والكمبيوتر." }, { title: "صوت مُتحقق منه", text: "يتأكد FFprobe من وجود الترميز الصحيح في ملفات MP3 وM4A وWAV وAAC وFLAC وOPUS." }, { title: "جودة قابلة للاختيار", text: "اختر فيديو حتى 1080p أو صوتاً مضغوطاً من 128 إلى 320 kbps." }, { title: "حدود واضحة", text: "نوضح الروابط العامة والمدة والجودة القصوى ولا ندعي الوصول إلى محتوى خاص." }] },
+  es: { kicker: "La diferencia toTube", title: "Tú eliges la calidad.", accent: "Nosotros verificamos el archivo.", intro: "Sin falsas promesas de 4K ni extensiones renombradas: toTube explica sus límites y comprueba el archivo antes de ofrecer la descarga.", cta: "Probar el convertidor", cards: [{ title: "MP4 compatible", text: "Verificación H.264, AAC y yuv420p para reproducir en móvil, TV y ordenador." }, { title: "Audio verificado", text: "FFprobe confirma el códec esperado en MP3, M4A, WAV, AAC, FLAC y OPUS." }, { title: "Calidad elegida", text: "Vídeo hasta 1080p o audio comprimido de 128 a 320 kbps." }, { title: "Límites claros", text: "Enlaces públicos, duración y calidad máxima explicados sin prometer acceso privado." }] },
+  pt: { kicker: "A diferença toTube", title: "Você escolhe a qualidade.", accent: "Nós verificamos o arquivo.", intro: "Sem falsas promessas de 4K ou extensões apenas renomeadas: o toTube informa os limites e verifica o arquivo antes do download.", cta: "Testar o conversor", cards: [{ title: "MP4 compatível", text: "Verificação de H.264, AAC e yuv420p para reprodução no celular, TV e computador." }, { title: "Áudio verificado", text: "O FFprobe confirma o codec esperado em MP3, M4A, WAV, AAC, FLAC e OPUS." }, { title: "Qualidade escolhida", text: "Vídeo até 1080p ou áudio comprimido de 128 a 320 kbps." }, { title: "Limites claros", text: "Links públicos, duração e qualidade máxima explicados sem prometer acesso privado." }] },
+  de: { kicker: "Der toTube-Unterschied", title: "Du wählst die Qualität.", accent: "Wir prüfen die Datei.", intro: "Keine erfundenen 4K-Versprechen und keine umbenannten Endungen: toTube nennt Grenzen und prüft das Medium vor dem Download.", cta: "Konverter testen", cards: [{ title: "Kompatibles MP4", text: "Prüfung von H.264, AAC und yuv420p für zuverlässige Wiedergabe auf Handy, TV und Computer." }, { title: "Geprüftes Audio", text: "FFprobe bestätigt den erwarteten Codec in MP3, M4A, WAV, AAC, FLAC und OPUS." }, { title: "Wählbare Qualität", text: "Video bis 1080p oder komprimiertes Audio mit 128 bis 320 kbps." }, { title: "Klare Grenzen", text: "Öffentliche Links, Dauer und maximale Qualität werden ohne Versprechen zu privaten Medien erklärt." }] },
+};
 
 function AdBanner({ adKey, width, height, label }: { adKey: string; width: number; height: number; label: string }) {
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -92,6 +110,8 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
   const copy = homeCopy[locale];
   const [url, setUrl] = useState("");
   const [format, setFormat] = useState<Format>("mp4");
+  const [videoQuality, setVideoQuality] = useState(1080);
+  const [audioQuality, setAudioQuality] = useState(320);
   const [phase, setPhase] = useState<Phase>("idle");
   const [preview, setPreview] = useState<MediaPreview | null>(null);
   const [result, setResult] = useState<DownloadResult | null>(null);
@@ -150,7 +170,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
       const response = await fetch("/api/convert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "convert", url: candidate, format }),
+        body: JSON.stringify({ action: "convert", url: candidate, format, videoQuality, audioQuality }),
       });
       const data = (await response.json()) as { download?: DownloadResult; error?: string };
       if (!response.ok || !data.download) throw new Error(data.error || copy.errors.convert);
@@ -247,6 +267,25 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
               </fieldset>
             )}
 
+            {preview && phase !== "done" && (
+              <fieldset className="quality-picker">
+                <legend>{qualityCopy[locale].title}</legend>
+                {format === "mp4" ? (
+                  <div className="quality-control">
+                    <span>{qualityCopy[locale].video}</span>
+                    <div>{[360, 480, 720, 1080].map((quality) => <label key={quality} className={videoQuality === quality ? "selected" : ""}><input type="radio" name="video-quality" value={quality} checked={videoQuality === quality} onChange={() => setVideoQuality(quality)} />{qualityCopy[locale].upTo} {quality}p</label>)}</div>
+                  </div>
+                ) : ["wav", "flac"].includes(format) ? (
+                  <p className="lossless-quality"><Check size={15} /> {qualityCopy[locale].lossless}</p>
+                ) : (
+                  <div className="quality-control">
+                    <span>{qualityCopy[locale].audio}</span>
+                    <div>{[128, 192, 256, 320].map((quality) => <label key={quality} className={audioQuality === quality ? "selected" : ""}><input type="radio" name="audio-quality" value={quality} checked={audioQuality === quality} onChange={() => setAudioQuality(quality)} />{quality} kbps</label>)}</div>
+                  </div>
+                )}
+              </fieldset>
+            )}
+
             {phase === "converting" && <div className="progress-wrap" aria-live="polite"><div><span>{copy.preparing} {format.toUpperCase()}</span><strong>{progress}%</strong></div><div className="progress-track"><span style={{ width: `${progress}%` }} /></div></div>}
             {phase === "done" && result && <div className="download-card" aria-live="polite">
               <div className="success-icon"><Check size={22} /></div><div><small>{copy.fileReady}</small><strong>{result.filename}</strong><span>{result.note || copy.readyToSave}</span></div>
@@ -287,6 +326,16 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
         </div>
       </section>
 
+      <section className="why-section quality-angle">
+        <div className="why-copy"><span className="section-kicker">{angleCopy[locale].kicker}</span><h2>{angleCopy[locale].title}<br /><em>{angleCopy[locale].accent}</em></h2><p>{angleCopy[locale].intro}</p><a href="#converter">{angleCopy[locale].cta} <ArrowRight size={17} /></a></div>
+        <div className="benefit-grid">
+          {angleCopy[locale].cards.map((card, index) => {
+            const Icon = index === 0 ? FileVideo : index === 1 ? Check : index === 2 ? Zap : ShieldCheck;
+            return <article key={card.title}><span><Icon /></span><h3>{card.title}</h3><p>{card.text}</p></article>;
+          })}
+        </div>
+      </section>
+
       <section className="faq-section" id="faq">
         <div className="faq-title"><span className="section-kicker">{copy.faqKicker}</span><h2>{copy.faqTitle}</h2><p>{copy.faqIntro}</p></div>
         <div className="faq-list">{copy.faqs.map((faq, index) => <article key={faq.q} className={openFaq === index ? "open" : ""}>
@@ -298,7 +347,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
         <div className="footer-main">
           <div><Link href={homeHref} className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link><p>{copy.footerText}</p></div>
           <div><strong>{copy.footerPlatforms}</strong>{platformIds.map((platform) => <Link href={platformPath(locale, platform)} key={platform}>{platformNames[platform]}</Link>)}</div>
-          <div><strong>{copy.footerFormats}</strong>{formatDefinitions.map((item) => <span key={item.id}>{item.label}</span>)}</div>
+          <div><strong>{copy.footerFormats}</strong><Link href={qualityPagePath(locale, "youtube-mp3-320")}>MP3 320 kbps</Link><Link href={qualityPagePath(locale, "youtube-mp4-1080")}>MP4 1080p</Link>{formatDefinitions.filter((item) => !["mp3", "mp4"].includes(item.id)).map((item) => <span key={item.id}>{item.label}</span>)}</div>
           <div><strong>{copy.footerLanguages}</strong>{locales.map((code) => <Link href={`/${code}`} hrefLang={code} key={code}>{homeCopy[code].nativeName}</Link>)}</div>
         </div>
         <div className="footer-bottom"><span>© 2026 toTube</span><span>{copy.responsible}</span></div>

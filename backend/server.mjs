@@ -188,6 +188,26 @@ async function ensureCompatibleMp4(filePath) {
   return filePath;
 }
 
+async function verifyAudioFile(filePath, format) {
+  const media = await probeMedia(filePath);
+  const audio = media.streams?.find((stream) => stream.codec_type === "audio");
+  const video = media.streams?.find((stream) => stream.codec_type === "video");
+  const expectedCodecs = {
+    mp3: ["mp3"],
+    m4a: ["aac", "alac"],
+    wav: ["pcm_"],
+    aac: ["aac"],
+    flac: ["flac"],
+    opus: ["opus"],
+  };
+  const expected = expectedCodecs[format] || [];
+  const codecMatches = expected.some((codec) => codec.endsWith("_") ? audio?.codec_name?.startsWith(codec) : audio?.codec_name === codec);
+  if (!audio || video || !codecMatches) {
+    throw new Error(`Le fichier ${format.toUpperCase()} généré n’a pas passé la vérification de compatibilité.`);
+  }
+  return filePath;
+}
+
 async function convert(request, body) {
   if (activeJobs >= MAX_CONCURRENT) throw new Error("Le serveur traite déjà plusieurs conversions. Réessayez dans un instant.");
   if (!consumeRateLimit(request)) throw new Error("Limite horaire atteinte. Réessayez plus tard.");
@@ -196,6 +216,8 @@ async function convert(request, body) {
   const format = outputFormat(body);
   const requestedHeight = Number(body.videoQuality || 1080);
   const videoHeight = [144, 240, 360, 480, 720, 1080].includes(requestedHeight) ? requestedHeight : 1080;
+  const requestedBitrate = Number(body.audioQuality || 320);
+  const audioBitrate = [128, 192, 256, 320].includes(requestedBitrate) ? requestedBitrate : 320;
   const jobId = randomBytes(12).toString("hex");
   const jobDir = join(WORK_ROOT, jobId);
   await mkdir(jobDir, { recursive: true });
@@ -227,7 +249,8 @@ async function convert(request, body) {
       "--remux-video", "mp4",
     );
   } else {
-    args.push("--extract-audio", "--audio-format", format, "--audio-quality", "0", "--embed-metadata");
+    const quality = ["wav", "flac"].includes(format) ? "0" : `${audioBitrate}K`;
+    args.push("--extract-audio", "--audio-format", format, "--audio-quality", quality, "--embed-metadata");
   }
   args.push(url);
 
@@ -244,6 +267,7 @@ async function convert(request, body) {
     if (!filePath) throw new Error("La conversion n’a produit aucun fichier.");
 
     if (format === "mp4") filePath = await ensureCompatibleMp4(filePath);
+    else filePath = await verifyAudioFile(filePath, format);
 
     const fileInfo = await stat(filePath);
     const token = randomBytes(24).toString("hex");
