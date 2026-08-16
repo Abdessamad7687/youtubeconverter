@@ -370,7 +370,7 @@ function safeUploadName(input) {
     .slice(0, 100) || "totube-upload";
 }
 
-async function registerDownload(request, filePath, jobDir) {
+async function registerDownload(request, filePath, jobDir, details = {}) {
   const fileInfo = await stat(filePath);
   const token = randomBytes(24).toString("hex");
   const filename = basename(filePath);
@@ -379,6 +379,7 @@ async function registerDownload(request, filePath, jobDir) {
     status: "redirect",
     url: `${publicBase(request)}/files/${token}`,
     filename,
+    ...details,
   };
 }
 
@@ -473,10 +474,17 @@ async function convert(request, body) {
       if (byteLimit && fileInfo.size > byteLimit) throw new ConverterError("media.too_large", "Cette vidéo dépasse la taille maximale autorisée.");
     }
 
-    if (format === "mp4") filePath = await ensureCompatibleMp4(filePath);
-    else filePath = await verifyAudioFile(filePath, format);
+    let details = {};
+    if (format === "mp4") {
+      filePath = await ensureCompatibleMp4(filePath);
+      const verified = await probeMedia(filePath);
+      const video = verified.streams?.find((stream) => stream.codec_type === "video");
+      details = { videoHeight: Number(video?.height || 0) || null };
+    } else {
+      filePath = await verifyAudioFile(filePath, format);
+    }
 
-    return registerDownload(request, filePath, jobDir);
+    return registerDownload(request, filePath, jobDir, details);
   } catch (error) {
     await rm(jobDir, { recursive: true, force: true });
     throw error;

@@ -125,6 +125,7 @@ async function requestConverter(url: URL, format: Format, videoQuality: number, 
     status?: string;
     url?: string;
     filename?: string;
+    videoHeight?: number | null;
     picker?: { url: string }[];
     error?: { code?: string };
     text?: string;
@@ -134,7 +135,7 @@ async function requestConverter(url: URL, format: Format, videoQuality: number, 
   }
   const downloadUrl = data.url || data.picker?.[0]?.url;
   if (!downloadUrl) throw new Error("La conversion s’est terminée sans fichier téléchargeable.");
-  return { url: downloadUrl, filename: data.filename };
+  return { url: downloadUrl, filename: data.filename, videoHeight: data.videoHeight || null };
 }
 
 export async function POST(request: NextRequest) {
@@ -181,7 +182,7 @@ export async function POST(request: NextRequest) {
         url: converted.url,
         filename: converted.filename || safeFilename(media.title, body.format),
         note: body.format === "mp4"
-          ? `MP4 compatible jusqu’à ${videoQuality}p, fichier vérifié`
+          ? `MP4 compatible ${converted.videoHeight ? `${converted.videoHeight}p` : `jusqu’à ${videoQuality}p`}, fichier vérifié`
           : `${body.format.toUpperCase()} ${["wav", "flac"].includes(body.format) ? "sans perte" : `${audioQuality} kbps`}, fichier vérifié`,
       },
     });
