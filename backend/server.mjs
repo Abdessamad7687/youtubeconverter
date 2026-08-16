@@ -11,6 +11,7 @@ import { isTransportFailure, isYouTubeChallenge } from "./proxy-policy.mjs";
 import { isThreadsUrl, resolveThreadsVideo } from "./threads-policy.mjs";
 
 const PORT = Number(process.env.PORT || 8788);
+const HOST = process.env.HOST || "0.0.0.0";
 const API_KEY = process.env.CONVERTER_API_KEY || "";
 const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "*";
@@ -557,8 +558,8 @@ const server = createServer(async (request, response) => {
   }
 });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`toTube converter listening on http://localhost:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`toTube converter listening on http://${HOST}:${PORT}`);
 });
 
 async function shutdown() {
