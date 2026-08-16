@@ -252,6 +252,7 @@ async function runYtDlp(args, inputUrl, { stopOnMediaFailure = false } = {}) {
     );
   }
   const attempts = proxies.length ? proxies : [null];
+  let sawYouTubeChallenge = false;
   for (const proxy of attempts) {
     const attemptArgs = [...args];
     if (proxy) attemptArgs.splice(Math.max(0, attemptArgs.length - 1), 0, "--proxy", proxy);
@@ -259,6 +260,11 @@ async function runYtDlp(args, inputUrl, { stopOnMediaFailure = false } = {}) {
       return await run(YTDLP_BIN, attemptArgs);
     } catch (error) {
       if (isYouTubeChallenge(error)) {
+        if (proxy && YTDLP_PO_TOKEN_PROVIDER_URL) {
+          sawYouTubeChallenge = true;
+          proxyCooldowns.set(proxy, Date.now() + PROXY_COOLDOWN_MS);
+          continue;
+        }
         throw new ConverterError(
           "youtube.authentication_required",
           "YouTube demande une authentification pour cette vidéo. Utilisez l’option de téléversement pour convertir un fichier que vous êtes autorisé à utiliser.",
@@ -273,6 +279,12 @@ async function runYtDlp(args, inputUrl, { stopOnMediaFailure = false } = {}) {
       if (!proxy || (!isTransportFailure(error) && !isProxyMediaFailure(error))) throw error;
       proxyCooldowns.set(proxy, Date.now() + PROXY_COOLDOWN_MS);
     }
+  }
+  if (sawYouTubeChallenge) {
+    throw new ConverterError(
+      "youtube.authentication_required",
+      "YouTube demande une authentification pour cette vidéo. Utilisez l’option de téléversement pour convertir un fichier que vous êtes autorisé à utiliser.",
+    );
   }
   throw new ConverterError(
     "network.proxy_unavailable",

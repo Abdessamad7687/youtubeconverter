@@ -20,7 +20,9 @@ the first public MP4 is converted.
 `YTDLP_PROXIES` can contain a comma-separated proxy pool. A proxy is placed on
 cooldown only after transport failures such as timeouts, connection errors,
 proxy authentication failures, upstream 502–504 responses, or media-CDN
-403/429 responses. `YTDLP_PROXY_HOSTS` limits that pool to the platforms it was
+403/429 responses. When the PO-token provider is enabled, a YouTube login
+challenge also cools down that single route before the service tries another
+healthy route. `YTDLP_PROXY_HOSTS` limits the pool to the platforms it was
 purchased for, so a YouTube-specific pool cannot break Rumble, Threads, or
 other direct extractors. YouTube login or anti-bot challenges are never treated
 as ordinary transport failures; the API returns the
@@ -36,7 +38,7 @@ media.
 
 The converter first requests the selected adaptive quality. When YouTube's CDN
 rejects that stream even with a valid PO token, MP4 conversion falls back to a
-combined H.264/AAC stream on the same healthy route. Audio conversion uses the
+combined H.264/AAC stream on a healthy route. Audio conversion uses the
 combined stream as its source so MP3/M4A output remains available when DASH
 audio URLs are rejected. Set `YTDLP_FFMPEG_LOCATION` when yt-dlp and FFmpeg are
 installed outside the system `PATH`.
