@@ -40,7 +40,7 @@ test("server-renders an indexable, multilingual French homepage", async () => {
   assert.match(html, /"@type":"WebSite","name":"toTube"/i);
   assert.match(html, /href="\/fr\/telecharger-video-tiktok"/i);
   assert.match(html, /placeholder="https:\/\/tiktok\.com\/@creator\/video\/…"/i);
-  assert.match(html, /Liens acceptés : YouTube, TikTok, Instagram, Facebook et X/i);
+  assert.match(html, /Liens acceptés : YouTube, TikTok, Instagram, Facebook, X, Rumble et Threads/i);
   assert.match(html, /aria-describedby="media-platform-hint"/i);
   assert.match(html, /href="\/fr\/youtube-mp3-320-kbps"/i);
   assert.match(html, /Choisissez la qualité/i);
@@ -95,6 +95,9 @@ for (const [pathname, lang, heading] of localizedQualityPages) {
     assert.match(html, new RegExp(`rel="canonical" href="https://totube\\.online${pathname}`));
     assert.match(html, /hreflang="x-default"/i);
     assert.match(html, /"@type":"FAQPage"/i);
+    assert.match(html, /"@type":"WebApplication"/i);
+    assert.match(html, /class="tool-navigation"/i);
+    assert.match(html, /class="tool-footer"/i);
     assert.match(html, /"@type":"BreadcrumbList"/i);
   });
 }
@@ -103,9 +106,11 @@ test("publishes all localized topic pages in the sitemap", async () => {
   const response = await request("/sitemap.xml");
   assert.equal(response.status, 200);
   const xml = await response.text();
-  assert.equal((xml.match(/<url>/g) || []).length, 54);
+  assert.equal((xml.match(/<url>/g) || []).length, 66);
   assert.match(xml, /https:\/\/totube\.online\/en\/youtube-to-mp3-320kbps/);
   assert.match(xml, /https:\/\/totube\.online\/fr\/youtube-mp4-1080p/);
+  assert.match(xml, /https:\/\/totube\.online\/fr\/telecharger-video-rumble/);
+  assert.match(xml, /https:\/\/totube\.online\/en\/download-threads-video/);
   assert.doesNotMatch(xml, /<lastmod>/, "lastmod must be omitted unless it reflects a real content update");
 });
 
@@ -138,6 +143,8 @@ const localizedPlatformPages = [
   ["/es/descargar-video-facebook", "es", "Descargar vídeos de Facebook"],
   ["/pt/baixar-video-twitter", "pt", "Baixar vídeos do Twitter / X"],
   ["/de/youtube-video-herunterladen", "de", "YouTube-Videos herunterladen"],
+  ["/fr/telecharger-video-rumble", "fr", "Télécharger une vidéo Rumble"],
+  ["/en/download-threads-video", "en", "Download Threads videos"],
 ];
 
 for (const [pathname, lang, heading] of localizedPlatformPages) {
@@ -150,6 +157,9 @@ for (const [pathname, lang, heading] of localizedPlatformPages) {
     assert.match(html, new RegExp(`rel="canonical" href="https://totube\\.online${pathname}`));
     assert.match(html, /hreflang="x-default"/i);
     assert.match(html, /"@type":"FAQPage"/i);
+    assert.match(html, /"@type":"WebApplication"/i);
+    assert.match(html, /class="tool-navigation"/i);
+    assert.match(html, /class="tool-footer"/i);
   });
 }
 
@@ -169,6 +179,22 @@ test("recognizes supported public social-media links before conversion", async (
   const data = await response.json();
   assert.equal(data.media.source, "TikTok");
   assert.equal(data.media.title, "Média TikTok");
+});
+
+test("recognizes Rumble and Threads public links before conversion", async () => {
+  for (const [url, source] of [
+    ["https://rumble.com/v123abc-example.html", "Rumble"],
+    ["https://www.threads.com/@creator/post/ABC123", "Threads"],
+  ]) {
+    const response = await request("/api/convert", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "inspect", url }),
+    });
+    assert.equal(response.status, 200);
+    const data = await response.json();
+    assert.equal(data.media.source, source);
+  }
 });
 
 test("accepts a new lossless audio format", async () => {

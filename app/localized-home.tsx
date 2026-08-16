@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { homeCopy, Locale, locales, localizedSlugs, platformIds, platformNames, platformPath, qualityPagePath } from "./i18n";
+import { FormatMenu, PlatformMenu } from "./tool-navigation";
 
 export type Format = "mp3" | "mp4" | "m4a" | "wav" | "aac" | "flac" | "opus";
 type Phase = "idle" | "inspecting" | "ready" | "converting" | "done" | "error";
@@ -37,6 +38,8 @@ const platformPlaceholders = [
   "https://facebook.com/watch/?v=…",
   "https://x.com/creator/status/…",
   "https://youtube.com/watch?v=…",
+  "https://rumble.com/v…",
+  "https://threads.com/@creator/post/…",
 ];
 
 const formatDefinitions: { id: Format; label: string; note: string; icon: typeof FileAudio }[] = [
@@ -59,12 +62,12 @@ const qualityCopy: Record<Locale, { title: string; video: string; audio: string;
 };
 
 const platformHint: Record<Locale, string> = {
-  fr: "Liens acceptés : YouTube, TikTok, Instagram, Facebook et X",
-  en: "Accepted links: YouTube, TikTok, Instagram, Facebook and X",
-  ar: "الروابط المدعومة: YouTube وTikTok وInstagram وFacebook وX",
-  es: "Enlaces admitidos: YouTube, TikTok, Instagram, Facebook y X",
-  pt: "Links aceitos: YouTube, TikTok, Instagram, Facebook e X",
-  de: "Unterstützte Links: YouTube, TikTok, Instagram, Facebook und X",
+  fr: "Liens acceptés : YouTube, TikTok, Instagram, Facebook, X, Rumble et Threads",
+  en: "Accepted links: YouTube, TikTok, Instagram, Facebook, X, Rumble and Threads",
+  ar: "الروابط المدعومة: YouTube وTikTok وInstagram وFacebook وX وRumble وThreads",
+  es: "Enlaces admitidos: YouTube, TikTok, Instagram, Facebook, X, Rumble y Threads",
+  pt: "Links aceitos: YouTube, TikTok, Instagram, Facebook, X, Rumble e Threads",
+  de: "Unterstützte Links: YouTube, TikTok, Instagram, Facebook, X, Rumble und Threads",
 };
 
 const uploadCopy: Record<Locale, { title: string; text: string; button: string; limit: string }> = {
@@ -273,6 +276,8 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
           <a href="#how" onClick={() => setMenuOpen(false)}>{copy.nav[0]}</a>
           <a href="#platforms" onClick={() => setMenuOpen(false)}>{copy.nav[1]}</a>
           <a href="#faq" onClick={() => setMenuOpen(false)}>{copy.nav[2]}</a>
+          <PlatformMenu locale={locale} />
+          <FormatMenu locale={locale} />
           <LanguageSwitcher locale={locale} />
           <a href="#converter" className="nav-cta" onClick={() => setMenuOpen(false)}>{copy.navCta} <ArrowRight size={15} /></a>
         </nav>

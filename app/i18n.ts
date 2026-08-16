@@ -1,7 +1,7 @@
 export const locales = ["fr", "en", "ar", "es", "pt", "de"] as const;
 export type Locale = (typeof locales)[number];
 
-export const platformIds = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
+export const platformIds = ["youtube", "tiktok", "instagram", "facebook", "twitter", "rumble", "threads"] as const;
 export type PlatformId = (typeof platformIds)[number];
 export const qualityPageIds = ["youtube-mp3-320", "youtube-mp4-1080"] as const;
 export type QualityPageId = (typeof qualityPageIds)[number];
@@ -66,6 +66,8 @@ export const platformNames: Record<PlatformId, string> = {
   instagram: "Instagram",
   facebook: "Facebook",
   twitter: "Twitter / X",
+  rumble: "Rumble",
+  threads: "Threads",
 };
 
 export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
@@ -75,6 +77,8 @@ export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
     instagram: "telecharger-video-instagram",
     facebook: "telecharger-video-facebook",
     twitter: "telecharger-video-twitter",
+    rumble: "telecharger-video-rumble",
+    threads: "telecharger-video-threads",
   },
   en: {
     youtube: "download-youtube-video",
@@ -82,6 +86,8 @@ export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
     instagram: "download-instagram-video",
     facebook: "download-facebook-video",
     twitter: "download-twitter-video",
+    rumble: "download-rumble-video",
+    threads: "download-threads-video",
   },
   ar: {
     youtube: "youtube-downloader",
@@ -89,6 +95,8 @@ export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
     instagram: "instagram-downloader",
     facebook: "facebook-downloader",
     twitter: "twitter-downloader",
+    rumble: "rumble-video-downloader",
+    threads: "threads-video-downloader",
   },
   es: {
     youtube: "descargar-video-youtube",
@@ -96,6 +104,8 @@ export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
     instagram: "descargar-video-instagram",
     facebook: "descargar-video-facebook",
     twitter: "descargar-video-twitter",
+    rumble: "descargar-video-rumble",
+    threads: "descargar-video-threads",
   },
   pt: {
     youtube: "baixar-video-youtube",
@@ -103,6 +113,8 @@ export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
     instagram: "baixar-video-instagram",
     facebook: "baixar-video-facebook",
     twitter: "baixar-video-twitter",
+    rumble: "baixar-video-rumble",
+    threads: "baixar-video-threads",
   },
   de: {
     youtube: "youtube-video-herunterladen",
@@ -110,6 +122,8 @@ export const localizedSlugs: Record<Locale, Record<PlatformId, string>> = {
     instagram: "instagram-video-herunterladen",
     facebook: "facebook-video-herunterladen",
     twitter: "twitter-video-herunterladen",
+    rumble: "rumble-video-herunterladen",
+    threads: "threads-video-herunterladen",
   },
 };
 
@@ -126,10 +140,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
   fr: {
     language: "Français", nativeName: "Français", dir: "ltr", ogLocale: "fr_FR",
     metaTitle: "Convertisseur vidéo MP3, MP4, WAV et plus | toTube",
-    metaDescription: "Téléchargez et convertissez des vidéos publiques YouTube, TikTok, Instagram, Facebook et X en MP3, MP4, M4A, WAV, AAC, FLAC ou OPUS.",
+    metaDescription: "Téléchargez et convertissez des vidéos publiques YouTube, TikTok, Instagram, Facebook, X, Rumble et Threads en MP3, MP4, M4A, WAV, AAC, FLAC ou OPUS.",
     nav: ["Comment ça marche", "Plateformes", "Questions"], navCta: "Convertir une vidéo",
-    eyebrow: "7 formats · 5 plateformes", title: "Convertisseur vidéo", accent: "universel.",
-    subtitle: "Téléchargez et convertissez des vidéos publiques YouTube, TikTok, Instagram, Facebook et X dans le format adapté à votre appareil.",
+    eyebrow: "7 formats · 7 plateformes", title: "Convertisseur vidéo", accent: "universel.",
+    subtitle: "Téléchargez et convertissez des vidéos publiques YouTube, TikTok, Instagram, Facebook, X, Rumble et Threads dans le format adapté à votre appareil.",
     ad: "Publicité", ready: "Convertisseur prêt", private: "Confidentiel par défaut", paste: "Collez l’URL de votre vidéo",
     empty: "Collez un lien vidéo pour commencer.", inspect: "Rechercher", inspecting: "Analyse du lien…", convert: "Convertir maintenant", converting: "Conversion…",
     sample: "Essayez une vidéo Creative Commons", chooseFormat: "Choisissez un format", preparing: "Préparation du fichier", fileReady: "Votre fichier est prêt",
@@ -150,10 +164,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
   en: {
     language: "English", nativeName: "English", dir: "ltr", ogLocale: "en_US",
     metaTitle: "Video converter for MP3, MP4, WAV and more | toTube",
-    metaDescription: "Download and convert public YouTube, TikTok, Instagram, Facebook and X videos to MP3, MP4, M4A, WAV, AAC, FLAC or OPUS.",
+    metaDescription: "Download and convert public YouTube, TikTok, Instagram, Facebook, X, Rumble and Threads videos to MP3, MP4, M4A, WAV, AAC, FLAC or OPUS.",
     nav: ["How it works", "Platforms", "Questions"], navCta: "Convert a video",
-    eyebrow: "7 formats · 5 platforms", title: "Universal video", accent: "converter.",
-    subtitle: "Download and convert public videos from YouTube, TikTok, Instagram, Facebook and X into the right format for any device.",
+    eyebrow: "7 formats · 7 platforms", title: "Universal video", accent: "converter.",
+    subtitle: "Download and convert public videos from YouTube, TikTok, Instagram, Facebook, X, Rumble and Threads into the right format for any device.",
     ad: "Advertisement", ready: "Converter ready", private: "Private by default", paste: "Paste your video URL",
     empty: "Paste a video link to get started.", inspect: "Find media", inspecting: "Checking link…", convert: "Convert now", converting: "Converting…",
     sample: "Try a Creative Commons sample", chooseFormat: "Choose a format", preparing: "Preparing your file", fileReady: "Your file is ready",
@@ -174,10 +188,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
   ar: {
     language: "Arabic", nativeName: "العربية", dir: "rtl", ogLocale: "ar_AR",
     metaTitle: "محول فيديو MP3 وMP4 وWAV والمزيد | toTube",
-    metaDescription: "نزّل وحوّل فيديوهات YouTube وTikTok وInstagram وFacebook وX العامة إلى MP3 أو MP4 أو M4A أو WAV أو AAC أو FLAC أو OPUS.",
+    metaDescription: "نزّل وحوّل فيديوهات YouTube وTikTok وInstagram وFacebook وX وRumble وThreads العامة إلى MP3 أو MP4 أو M4A أو WAV أو AAC أو FLAC أو OPUS.",
     nav: ["طريقة الاستخدام", "المنصات", "الأسئلة"], navCta: "تحويل فيديو",
-    eyebrow: "7 صيغ · 5 منصات", title: "محول فيديو", accent: "شامل.",
-    subtitle: "نزّل وحوّل الفيديوهات العامة من YouTube وTikTok وInstagram وFacebook وX إلى الصيغة المناسبة لجهازك.",
+    eyebrow: "7 صيغ · 7 منصات", title: "محول فيديو", accent: "شامل.",
+    subtitle: "نزّل وحوّل الفيديوهات العامة من YouTube وTikTok وInstagram وFacebook وX وRumble وThreads إلى الصيغة المناسبة لجهازك.",
     ad: "إعلان", ready: "المحول جاهز", private: "خصوصية افتراضية", paste: "ألصق رابط الفيديو",
     empty: "ألصق رابط فيديو للبدء.", inspect: "فحص الرابط", inspecting: "جارٍ فحص الرابط…", convert: "حوّل الآن", converting: "جارٍ التحويل…",
     sample: "جرّب فيديو Creative Commons", chooseFormat: "اختر الصيغة", preparing: "جارٍ إعداد الملف", fileReady: "ملفك جاهز",
@@ -198,10 +212,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
   es: {
     language: "Spanish", nativeName: "Español", dir: "ltr", ogLocale: "es_ES",
     metaTitle: "Convertidor de vídeo MP3, MP4, WAV y más | toTube",
-    metaDescription: "Descarga y convierte vídeos públicos de YouTube, TikTok, Instagram, Facebook y X a MP3, MP4, M4A, WAV, AAC, FLAC u OPUS.",
+    metaDescription: "Descarga y convierte vídeos públicos de YouTube, TikTok, Instagram, Facebook, X, Rumble y Threads a MP3, MP4, M4A, WAV, AAC, FLAC u OPUS.",
     nav: ["Cómo funciona", "Plataformas", "Preguntas"], navCta: "Convertir vídeo",
-    eyebrow: "7 formatos · 5 plataformas", title: "Convertidor de vídeo", accent: "universal.",
-    subtitle: "Descarga y convierte vídeos públicos de YouTube, TikTok, Instagram, Facebook y X al formato adecuado para tu dispositivo.",
+    eyebrow: "7 formatos · 7 plataformas", title: "Convertidor de vídeo", accent: "universal.",
+    subtitle: "Descarga y convierte vídeos públicos de YouTube, TikTok, Instagram, Facebook, X, Rumble y Threads al formato adecuado para tu dispositivo.",
     ad: "Publicidad", ready: "Convertidor listo", private: "Privado por defecto", paste: "Pega la URL del vídeo",
     empty: "Pega un enlace de vídeo para empezar.", inspect: "Buscar vídeo", inspecting: "Analizando enlace…", convert: "Convertir ahora", converting: "Convirtiendo…",
     sample: "Prueba un vídeo Creative Commons", chooseFormat: "Elige un formato", preparing: "Preparando el archivo", fileReady: "Tu archivo está listo",
@@ -217,10 +231,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
   pt: {
     language: "Portuguese", nativeName: "Português", dir: "ltr", ogLocale: "pt_BR",
     metaTitle: "Conversor de vídeo MP3, MP4, WAV e mais | toTube",
-    metaDescription: "Baixe e converta vídeos públicos do YouTube, TikTok, Instagram, Facebook e X para MP3, MP4, M4A, WAV, AAC, FLAC ou OPUS.",
+    metaDescription: "Baixe e converta vídeos públicos do YouTube, TikTok, Instagram, Facebook, X, Rumble e Threads para MP3, MP4, M4A, WAV, AAC, FLAC ou OPUS.",
     nav: ["Como funciona", "Plataformas", "Perguntas"], navCta: "Converter vídeo",
-    eyebrow: "7 formatos · 5 plataformas", title: "Conversor de vídeo", accent: "universal.",
-    subtitle: "Baixe e converta vídeos públicos do YouTube, TikTok, Instagram, Facebook e X no formato ideal para seu dispositivo.",
+    eyebrow: "7 formatos · 7 plataformas", title: "Conversor de vídeo", accent: "universal.",
+    subtitle: "Baixe e converta vídeos públicos do YouTube, TikTok, Instagram, Facebook, X, Rumble e Threads no formato ideal para seu dispositivo.",
     ad: "Publicidade", ready: "Conversor pronto", private: "Privado por padrão", paste: "Cole a URL do vídeo",
     empty: "Cole um link de vídeo para começar.", inspect: "Buscar vídeo", inspecting: "Analisando link…", convert: "Converter agora", converting: "Convertendo…",
     sample: "Teste um vídeo Creative Commons", chooseFormat: "Escolha um formato", preparing: "Preparando o arquivo", fileReady: "Seu arquivo está pronto",
@@ -236,10 +250,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
   de: {
     language: "German", nativeName: "Deutsch", dir: "ltr", ogLocale: "de_DE",
     metaTitle: "Video-Konverter für MP3, MP4, WAV und mehr | toTube",
-    metaDescription: "Öffentliche Videos von YouTube, TikTok, Instagram, Facebook und X als MP3, MP4, M4A, WAV, AAC, FLAC oder OPUS herunterladen.",
+    metaDescription: "Öffentliche Videos von YouTube, TikTok, Instagram, Facebook, X, Rumble und Threads als MP3, MP4, M4A, WAV, AAC, FLAC oder OPUS herunterladen.",
     nav: ["So funktioniert’s", "Plattformen", "Fragen"], navCta: "Video konvertieren",
-    eyebrow: "7 Formate · 5 Plattformen", title: "Universeller", accent: "Video-Konverter.",
-    subtitle: "Öffentliche Videos von YouTube, TikTok, Instagram, Facebook und X in das passende Format für jedes Gerät umwandeln.",
+    eyebrow: "7 Formate · 7 Plattformen", title: "Universeller", accent: "Video-Konverter.",
+    subtitle: "Öffentliche Videos von YouTube, TikTok, Instagram, Facebook, X, Rumble und Threads in das passende Format für jedes Gerät umwandeln.",
     ad: "Werbung", ready: "Konverter bereit", private: "Standardmäßig privat", paste: "Video-URL einfügen",
     empty: "Füge einen Videolink ein.", inspect: "Video suchen", inspecting: "Link wird geprüft…", convert: "Jetzt konvertieren", converting: "Konvertierung…",
     sample: "Creative-Commons-Video testen", chooseFormat: "Format auswählen", preparing: "Datei wird vorbereitet", fileReady: "Deine Datei ist bereit",

@@ -1,6 +1,7 @@
-import { ArrowRight, Check, Download, FileAudio, FileVideo, Play, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Check, FileAudio, FileVideo, Play, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
-import { homeCopy, Locale, locales, PlatformId, platformIds, platformNames, platformPath } from "./i18n";
+import { homeCopy, Locale, PlatformId, platformIds, platformNames, platformPath } from "./i18n";
+import { ToolFooter, ToolNavigation } from "./tool-navigation";
 
 type LocaleSeo = {
   title: (platform: string) => string;
@@ -62,6 +63,8 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
     instagram: { title: "Reels, vidéos et stories", text: "Les Reels et publications vidéo publiques peuvent être traités. Les stories expirées, comptes privés et photos seules ne sont pas récupérables par le convertisseur vidéo." },
     facebook: { title: "Publications Facebook publiques", text: "Les vidéos visibles sans compte sont compatibles. Les groupes fermés, publications réservées aux amis et vidéos privées restent inaccessibles." },
     twitter: { title: "Vidéos X et GIF", text: "X diffuse souvent les GIF animés sous forme de MP4. Le fichier final peut donc être une vidéo MP4 légère même lorsque le post affiche le mot GIF." },
+    rumble: { title: "Vidéos et directs Rumble", text: "Les vidéos Rumble publiques déjà publiées peuvent être converties. Les directs en cours, contenus supprimés ou réservés aux membres ne sont pas accessibles." },
+    threads: { title: "Publications vidéo Threads", text: "toTube traite les publications vidéo Threads publiques visibles sans connexion. Pour un carrousel, la première vidéo disponible est préparée; les posts privés ou sans vidéo sont ignorés." },
   },
   en: {
     youtube: { title: "YouTube videos, Shorts and music", text: "Public standard videos and Shorts are supported. Playlist links process one video at a time to keep jobs fast and downloads predictable." },
@@ -69,6 +72,8 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
     instagram: { title: "Reels, videos and stories", text: "Public Reels and video posts may be processed. Expired stories, private accounts and standalone photos are not available through the video converter." },
     facebook: { title: "Public Facebook posts", text: "Videos viewable without an account are supported. Closed groups, friends-only posts and private videos remain inaccessible." },
     twitter: { title: "X videos and GIFs", text: "X often delivers animated GIFs as MP4 video. The downloaded file may therefore be a lightweight MP4 even when the post labels it as a GIF." },
+    rumble: { title: "Rumble videos and live streams", text: "Published public Rumble videos can be converted. Active live streams, removed media and members-only content are not accessible." },
+    threads: { title: "Threads video posts", text: "toTube handles public Threads video posts that are visible without signing in. For a carousel, the first available video is prepared; private and non-video posts are skipped." },
   },
   ar: {
     youtube: { title: "فيديوهات YouTube وShorts والموسيقى", text: "يدعم toTube الفيديوهات العامة وShorts. تتم معالجة فيديو واحد فقط من رابط قائمة التشغيل لتسريع الخدمة وتوضيح عملية التنزيل." },
@@ -76,6 +81,8 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
     instagram: { title: "Reels والفيديوهات والقصص", text: "يمكن معالجة Reels والمنشورات العامة. القصص المنتهية والحسابات الخاصة والصور المنفردة غير متاحة في محول الفيديو." },
     facebook: { title: "منشورات Facebook العامة", text: "يمكن تنزيل الفيديوهات المرئية بدون حساب. المجموعات المغلقة والمنشورات المخصصة للأصدقاء والفيديوهات الخاصة غير متاحة." },
     twitter: { title: "فيديوهات X وGIF", text: "يعرض X كثيراً من صور GIF المتحركة كفيديو MP4، لذلك قد يكون الملف النهائي MP4 خفيفاً حتى عندما يظهر في المنشور كصورة GIF." },
+    rumble: { title: "فيديوهات وبث Rumble", text: "يمكن تحويل فيديوهات Rumble العامة المنشورة. البث المباشر الجاري والمحتوى المحذوف أو الخاص بالأعضاء غير متاح." },
+    threads: { title: "منشورات فيديو Threads", text: "يعالج toTube منشورات Threads العامة التي تحتوي على فيديو وتظهر بدون تسجيل دخول. في المنشور المتعدد تُحضّر أول فيديو متاح فقط." },
   },
   es: {
     youtube: { title: "Vídeos, Shorts y música de YouTube", text: "Se admiten vídeos públicos y Shorts. Los enlaces de listas procesan un vídeo cada vez para mantener conversiones rápidas y claras." },
@@ -83,6 +90,8 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
     instagram: { title: "Reels, vídeos e historias", text: "Se pueden procesar Reels y publicaciones públicas. Las historias caducadas, cuentas privadas y fotos sueltas no están disponibles." },
     facebook: { title: "Publicaciones públicas de Facebook", text: "Los vídeos visibles sin cuenta son compatibles. Los grupos cerrados, publicaciones para amigos y vídeos privados no lo son." },
     twitter: { title: "Vídeos y GIF de X", text: "X suele entregar los GIF animados como vídeo MP4. El archivo final puede ser un MP4 ligero aunque la publicación lo llame GIF." },
+    rumble: { title: "Vídeos y directos de Rumble", text: "Los vídeos públicos de Rumble ya publicados se pueden convertir. Los directos activos y el contenido eliminado o para miembros no son accesibles." },
+    threads: { title: "Publicaciones de vídeo en Threads", text: "toTube procesa publicaciones públicas de Threads con vídeo visibles sin iniciar sesión. En un carrusel se prepara el primer vídeo disponible." },
   },
   pt: {
     youtube: { title: "Vídeos, Shorts e música do YouTube", text: "Vídeos públicos e Shorts são compatíveis. Links de playlists processam um vídeo por vez para manter o serviço rápido e previsível." },
@@ -90,6 +99,8 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
     instagram: { title: "Reels, vídeos e stories", text: "Reels e posts públicos podem ser processados. Stories expirados, contas privadas e fotos isoladas não estão disponíveis." },
     facebook: { title: "Posts públicos do Facebook", text: "Vídeos visíveis sem conta são compatíveis. Grupos fechados, posts só para amigos e vídeos privados não são acessíveis." },
     twitter: { title: "Vídeos e GIFs do X", text: "O X geralmente entrega GIFs animados como vídeo MP4. O arquivo final pode ser um MP4 leve mesmo quando o post mostra a palavra GIF." },
+    rumble: { title: "Vídeos e lives do Rumble", text: "Vídeos públicos já publicados no Rumble podem ser convertidos. Lives em andamento e conteúdo removido ou exclusivo para membros não estão acessíveis." },
+    threads: { title: "Posts de vídeo do Threads", text: "O toTube processa posts públicos do Threads com vídeo que estejam visíveis sem login. Em um carrossel, o primeiro vídeo disponível é preparado." },
   },
   de: {
     youtube: { title: "YouTube-Videos, Shorts und Musik", text: "Öffentliche Videos und Shorts werden unterstützt. Playlist-Links verarbeiten jeweils ein Video, damit Aufträge schnell und übersichtlich bleiben." },
@@ -97,6 +108,8 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
     instagram: { title: "Reels, Videos und Storys", text: "Öffentliche Reels und Videobeiträge können verarbeitet werden. Abgelaufene Storys, private Konten und einzelne Fotos sind nicht verfügbar." },
     facebook: { title: "Öffentliche Facebook-Beiträge", text: "Videos, die ohne Konto sichtbar sind, werden unterstützt. Geschlossene Gruppen, Beiträge nur für Freunde und private Videos nicht." },
     twitter: { title: "X-Videos und GIFs", text: "X liefert animierte GIFs häufig als MP4-Video. Deshalb kann der Download ein kleines MP4 sein, auch wenn der Beitrag es als GIF bezeichnet." },
+    rumble: { title: "Rumble-Videos und Livestreams", text: "Bereits veröffentlichte, öffentliche Rumble-Videos können konvertiert werden. Laufende Livestreams sowie gelöschte oder exklusive Inhalte sind nicht verfügbar." },
+    threads: { title: "Threads-Videobeiträge", text: "toTube verarbeitet öffentliche Threads-Beiträge mit Video, die ohne Anmeldung sichtbar sind. Bei einem Karussell wird das erste verfügbare Video vorbereitet." },
   },
 };
 
@@ -118,17 +131,20 @@ export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; pl
     { question: ui.faqPublic(name), answer: ui.faqPublicAnswer(name) },
     { question: ui.faqFormat, answer: ui.faqFormatAnswer },
     { question: ui.faqPrivate, answer: ui.faqPrivateAnswer },
+    { question: platformSpecific[locale][platform].title, answer: platformSpecific[locale][platform].text },
   ];
   const faqSchema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
   const breadcrumbSchema = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: ui.home, item: `https://totube.online/${locale}` }, { "@type": "ListItem", position: 2, name: ui.title(name), item: canonical }] };
+  const applicationSchema = { "@context": "https://schema.org", "@type": "WebApplication", name: `${name} downloader by toTube`, url: canonical, description: ui.description(name), applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, featureList: [`Public ${name} video links`, "MP4 output up to 1080p", "Six audio output formats"] };
 
   return (
     <main className="seo-page" dir={copy.dir}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(applicationSchema) }} />
       <header className="site-header seo-header">
         <Link href={`/${locale}`} className="brand" aria-label="toTube"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link>
-        <nav className="locale-inline" aria-label="Languages">{locales.map((code) => <Link key={code} href={platformPath(code, platform)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>{code.toUpperCase()}</Link>)}</nav>
+        <ToolNavigation locale={locale} currentPlatform={platform} />
         <Link className="nav-cta" href={`/${locale}#converter`}>{ui.convert} <ArrowRight size={15} /></Link>
       </header>
 
@@ -161,7 +177,7 @@ export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; pl
 
       <section className="related-section"><span className="section-kicker">{ui.related}</span><h2>{ui.related}</h2><div>{platformIds.filter((item) => item !== platform).slice(0, 3).map((item) => <Link href={platformPath(locale, item)} key={item}><strong>{platformNames[item]}</strong><p>{ui.description(platformNames[item])}</p><ArrowRight size={17} /></Link>)}</div></section>
 
-      <footer className="seo-footer"><Link href={`/${locale}`} className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link><p>{ui.footer}</p><Link href={`/${locale}#converter`}><Download size={15} /> {ui.convert}</Link></footer>
+      <ToolFooter locale={locale} text={ui.footer} />
     </main>
   );
 }

@@ -12,6 +12,11 @@ The backend also accepts authorized media uploads at `POST /upload`. Uploaded
 files are streamed to temporary storage, converted with FFmpeg, validated with
 FFprobe, and removed automatically after the download expires.
 
+Rumble links use yt-dlp's native extractor. Public Threads video-post links use
+the `threads-cli` helper configured through `THREADS_BIN`; private, login-only,
+deleted and non-video posts are intentionally rejected. For Threads carousels,
+the first public MP4 is converted.
+
 `YTDLP_PROXIES` can contain a comma-separated proxy pool. A proxy is placed on
 cooldown only after transport failures such as timeouts, connection errors,
 proxy authentication failures, or upstream 502–504 responses. YouTube login or

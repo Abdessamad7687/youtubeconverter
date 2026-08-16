@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { isTransportFailure, isYouTubeChallenge } from "./proxy-policy.mjs";
+import { isThreadsUrl, resolveThreadsVideo } from "./threads-policy.mjs";
 
 const PORT = Number(process.env.PORT || 8788);
 const API_KEY = process.env.CONVERTER_API_KEY || "";
@@ -15,6 +16,7 @@ const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "*";
 const WORK_ROOT = resolve(process.env.WORK_DIR || join(tmpdir(), "totube-converter"));
 const YTDLP_BIN = process.env.YTDLP_BIN || "yt-dlp";
+const THREADS_BIN = process.env.THREADS_BIN || "th";
 const YTDLP_PROXY = process.env.YTDLP_PROXY?.trim();
 const YTDLP_PROXIES = [...new Set([
   ...(process.env.YTDLP_PROXIES || "").split(/[\n,;]+/).map((proxy) => proxy.trim()).filter(Boolean),
@@ -41,6 +43,7 @@ const allowedHosts = [
   "dailymotion.com", "vimeo.com", "pinterest.com", "pin.it",
   "snapchat.com", "linkedin.com", "reddit.com", "redd.it", "fb.watch",
   "dai.ly", "instagr.am",
+  "rumble.com", "threads.com", "threads.net",
 ];
 const jobs = new Map();
 const rateBuckets = new Map();
@@ -165,6 +168,24 @@ function run(command, args, timeoutMs = 600_000) {
       else rejectRun(new ProcessError(stderr.trim().split("\n").pop() || `${basename(command)} a quitté avec le code ${code}.`, stderr));
     });
   });
+}
+
+async function resolveSourceUrl(url) {
+  if (!isThreadsUrl(url)) return { url, referer: null, id: null };
+  try {
+    const result = await run(THREADS_BIN, ["post", url, "-o", "json"], 60_000);
+    const resolved = resolveThreadsVideo(JSON.parse(result.stdout), url);
+    return { url: resolved.mediaUrl, referer: url, id: resolved.shortcode };
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new ConverterError("threads.invalid_response", "Threads a renvoyé une réponse inexploitable. Réessayez plus tard.");
+    }
+    if (error?.code === "ENOENT") {
+      throw new ConverterError("threads.extractor_unavailable", "Le service Threads n’est pas disponible sur ce serveur.", 503);
+    }
+    if (error instanceof ConverterError) throw error;
+    throw new ConverterError("threads.unavailable", error instanceof Error ? error.message : "Impossible d’accéder à cette publication Threads publique.");
+  }
 }
 
 function orderedProxies() {
@@ -302,6 +323,7 @@ async function convert(request, body) {
   if (!consumeRateLimit(request)) throw new Error("Limite horaire atteinte. Réessayez plus tard.");
 
   const url = validMediaUrl(body.url);
+  const source = await resolveSourceUrl(url);
   const format = outputFormat(body);
   const requestedHeight = Number(body.videoQuality || 1080);
   const videoHeight = [144, 240, 360, 480, 720, 1080].includes(requestedHeight) ? requestedHeight : 1080;
@@ -320,11 +342,12 @@ async function convert(request, body) {
     "--concurrent-fragments", "4",
     "--js-runtimes", YTDLP_JS_RUNTIME,
     "--max-filesize", MAX_FILESIZE,
-    "--match-filter", `duration <= ${MAX_DURATION} & !is_live`,
     "--paths", `home:${jobDir}`,
     "--output", "%(title).120B-%(id)s.%(ext)s",
     "--print", "after_move:filepath",
   ];
+
+  if (!source.referer) args.push("--match-filter", `duration <= ${MAX_DURATION} & !is_live`);
 
   if (YTDLP_COOKIES_FILE) args.push("--cookies", YTDLP_COOKIES_FILE);
   if (YTDLP_EXTRACTOR_ARGS) args.push("--extractor-args", YTDLP_EXTRACTOR_ARGS);
@@ -340,7 +363,8 @@ async function convert(request, body) {
     const quality = ["wav", "flac"].includes(format) ? "0" : `${audioBitrate}K`;
     args.push("--extract-audio", "--audio-format", format, "--audio-quality", quality, "--embed-metadata");
   }
-  args.push(url);
+  if (source.referer) args.push("--output", `threads-${source.id}.%(ext)s`, "--referer", source.referer);
+  args.push(source.url);
 
   activeJobs += 1;
   try {
@@ -353,6 +377,17 @@ async function convert(request, body) {
       if (candidate) filePath = join(jobDir, candidate);
     }
     if (!filePath) throw new Error("La conversion n’a produit aucun fichier.");
+
+    if (source.referer) {
+      const downloaded = await probeMedia(filePath);
+      const duration = Number(downloaded.format?.duration || 0);
+      const fileInfo = await stat(filePath);
+      const maxBytes = /^([0-9]+(?:\.[0-9]+)?)([KMG])?$/i.exec(MAX_FILESIZE);
+      const multiplier = { K: 1024, M: 1024 ** 2, G: 1024 ** 3 }[maxBytes?.[2]?.toUpperCase()] || 1;
+      const byteLimit = Number(maxBytes?.[1] || 0) * multiplier;
+      if (duration > MAX_DURATION) throw new ConverterError("media.too_long", "La durée de cette vidéo dépasse la limite autorisée.");
+      if (byteLimit && fileInfo.size > byteLimit) throw new ConverterError("media.too_large", "Cette vidéo dépasse la taille maximale autorisée.");
+    }
 
     if (format === "mp4") filePath = await ensureCompatibleMp4(filePath);
     else filePath = await verifyAudioFile(filePath, format);

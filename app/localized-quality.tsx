@@ -1,6 +1,7 @@
-import { ArrowRight, Check, Download, FileAudio, FileVideo, Gauge, Play, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, FileAudio, FileVideo, Gauge, Play, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { homeCopy, Locale, locales, platformPath, qualityPagePath, QualityPageId } from "./i18n";
+import { homeCopy, Locale, platformPath, qualityPagePath, QualityPageId } from "./i18n";
+import { ToolFooter, ToolNavigation } from "./tool-navigation";
 
 type QualityContent = {
   home: string;
@@ -58,17 +59,19 @@ export function LocalizedQualityPage({ locale, page }: { locale: Locale; page: Q
   const otherPage: QualityPageId = page === "youtube-mp3-320" ? "youtube-mp4-1080" : "youtube-mp3-320";
   const faqSchema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: content.faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
   const breadcrumbSchema = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: content.home, item: `https://totube.online/${locale}` }, { "@type": "ListItem", position: 2, name: content.title, item: canonical }] };
+  const applicationSchema = { "@context": "https://schema.org", "@type": "WebApplication", name: `${content.title} by toTube`, url: canonical, description: content.description, applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, featureList: [content.selectable, content.verified, "Temporary private download link"] };
   const MainIcon = page === "youtube-mp3-320" ? FileAudio : FileVideo;
 
   return <main className="seo-page" dir={copy.dir}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-    <header className="site-header seo-header"><Link href={`/${locale}`} className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link><nav className="locale-inline" aria-label="Languages">{locales.map((code) => <Link key={code} href={qualityPagePath(code, page)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>{code.toUpperCase()}</Link>)}</nav><Link className="nav-cta" href={`/${locale}#converter`}>{content.convert} <ArrowRight size={15} /></Link></header>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(applicationSchema) }} />
+    <header className="site-header seo-header"><Link href={`/${locale}`} className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link><ToolNavigation locale={locale} currentQuality={page} /><Link className="nav-cta" href={`/${locale}#converter`}>{content.convert} <ArrowRight size={15} /></Link></header>
     <section className="seo-hero"><nav className="breadcrumbs"><Link href={`/${locale}`}>{content.home}</Link><span>/</span><span>{content.title}</span></nav><span className="section-kicker">{content.guide}</span><h1>{content.title}<br /><em>{content.accent}</em></h1><p>{content.description}</p><Link href={`/${locale}#converter`} className="seo-primary-cta">{content.convert} <ArrowRight size={18} /></Link><div className="seo-trust"><span><Check size={15} /> {content.free}</span><span><Check size={15} /> {content.verified}</span><span><Check size={15} /> {content.selectable}</span></div></section>
     <section className="seo-benefits"><article><span><MainIcon /></span><h2>{content.title}</h2><p>{content.description}</p></article><article><span><Gauge /></span><h2>{content.selectable}</h2><p>{content.sections[0].text}</p></article><article><span><ShieldCheck /></span><h2>{content.verified}</h2><p>{content.sections[2].text}</p></article></section>
     <article className="seo-article"><div className="seo-article-intro"><span className="section-kicker">{content.guide}</span><p>{content.description}</p></div><div className="seo-copy">{content.sections.map((section) => <section key={section.title}><h2>{section.title}</h2><p>{section.text}</p></section>)}<aside className="seo-callout"><span><MainIcon /></span><div><strong>{content.selectable}</strong><p>{content.verified}</p></div><Link href={`/${locale}#converter`}>{content.convert} <ArrowRight size={15} /></Link></aside></div></article>
     <section className="seo-faq"><div><span className="section-kicker">{content.questions}</span><h2>{content.questions}</h2></div><div className="seo-faq-list">{content.faqs.map((faq, index) => <details key={faq.question} open={index === 0}><summary><span>{String(index + 1).padStart(2, "0")}</span>{faq.question}</summary><p>{faq.answer}</p></details>)}</div></section>
     <section className="related-section"><span className="section-kicker">{content.related}</span><h2>{content.related}</h2><div><Link href={qualityPagePath(locale, otherPage)}><strong>{qualityContent[locale][otherPage].title}</strong><p>{qualityContent[locale][otherPage].description}</p><ArrowRight size={17} /></Link><Link href={platformPath(locale, "youtube")}><strong>YouTube Downloader</strong><p>{copy.metaDescription}</p><ArrowRight size={17} /></Link><Link href={`/${locale}#converter`}><strong>{content.convert}</strong><p>{content.selectable} · {content.verified}</p><ArrowRight size={17} /></Link></div></section>
-    <footer className="seo-footer"><Link href={`/${locale}`} className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link><p>{content.footer}</p><Link href={`/${locale}#converter`}><Download size={15} /> {content.convert}</Link></footer>
+    <ToolFooter locale={locale} text={content.footer} />
   </main>;
 }

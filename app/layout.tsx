@@ -43,6 +43,8 @@ export async function generateMetadata(): Promise<Metadata> {
       "télécharger vidéo Instagram",
       "télécharger vidéo Facebook",
       "télécharger vidéo Twitter",
+      "télécharger vidéo Rumble",
+      "télécharger vidéo Threads",
       "téléchargeur vidéo en ligne",
     ],
     manifest: "/manifest.webmanifest",
@@ -93,7 +95,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     description: copy.metaDescription,
     browserRequirements: "Requires JavaScript and a modern web browser",
     featureList: [
-      "YouTube, TikTok, Instagram, Facebook and X public-link conversion",
+      "YouTube, TikTok, Instagram, Facebook, X, Rumble and Threads public-link conversion",
       "MP4 resolution selection from 360p to 1080p",
       "Audio bitrate selection from 128 to 320 kbps",
       "MP3, MP4, M4A, WAV, AAC, FLAC and OPUS output",

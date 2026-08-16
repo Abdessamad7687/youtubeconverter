@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: copy.metaTitle,
     description: copy.metaDescription,
-    keywords: ["video downloader", "video converter", "YouTube MP3", "YouTube MP4", "TikTok downloader", "Instagram downloader", "Facebook video downloader", "Twitter video downloader", "MP3", "MP4", "WAV", "FLAC", "OPUS"],
+    keywords: ["video downloader", "video converter", "YouTube MP3", "YouTube MP4", "TikTok downloader", "Instagram downloader", "Facebook video downloader", "Twitter video downloader", "Rumble downloader", "Threads video downloader", "MP3", "MP4", "WAV", "FLAC", "OPUS"],
     alternates: { canonical, languages: languageAlternates() },
     openGraph: { title: copy.metaTitle, description: copy.metaDescription, url: canonical, locale: copy.ogLocale, type: "website" },
     twitter: { card: "summary_large_image", title: copy.metaTitle, description: copy.metaDescription },

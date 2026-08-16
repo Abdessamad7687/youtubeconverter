@@ -19,6 +19,8 @@ const PLATFORM_HOSTS = [
   { label: "Pinterest", hosts: ["pinterest.com", "pin.it"] },
   { label: "Snapchat", hosts: ["snapchat.com"] },
   { label: "LinkedIn", hosts: ["linkedin.com"] },
+  { label: "Rumble", hosts: ["rumble.com"] },
+  { label: "Threads", hosts: ["threads.com", "threads.net"] },
 ];
 
 class ConverterRequestError extends Error {
