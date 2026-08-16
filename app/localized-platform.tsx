@@ -2,6 +2,7 @@ import { ArrowRight, Check, FileAudio, FileVideo, Play, ShieldCheck, Zap } from 
 import Link from "next/link";
 import { homeCopy, Locale, PlatformId, platformIds, platformNames, platformPath } from "./i18n";
 import { ToolFooter, ToolNavigation } from "./tool-navigation";
+import InlinePlatformConverter from "./inline-platform-converter";
 
 type LocaleSeo = {
   title: (platform: string) => string;
@@ -72,7 +73,7 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
     instagram: { title: "Reels, videos and stories", text: "Public Reels and video posts may be processed. Expired stories, private accounts and standalone photos are not available through the video converter." },
     facebook: { title: "Public Facebook posts", text: "Videos viewable without an account are supported. Closed groups, friends-only posts and private videos remain inaccessible." },
     twitter: { title: "X videos and GIFs", text: "X often delivers animated GIFs as MP4 video. The downloaded file may therefore be a lightweight MP4 even when the post labels it as a GIF." },
-    rumble: { title: "Rumble videos and live streams", text: "Published public Rumble videos can be converted. Active live streams, removed media and members-only content are not accessible." },
+    rumble: { title: "Rumble video downloader for MP4 and MP3", text: "Use the Rumble downloader above to download a public Rumble video as MP4 or convert it to MP3. Each Rumble video download is checked before it is offered; active live streams and members-only media remain inaccessible." },
     threads: { title: "Threads video posts", text: "toTube handles public Threads video posts that are visible without signing in. For a carousel, the first available video is prepared; private and non-video posts are skipped." },
   },
   ar: {
@@ -116,6 +117,10 @@ const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text:
 export function platformMetadataText(locale: Locale, platform: PlatformId) {
   const ui = seoUi[locale];
   const name = platformNames[platform];
+  if (platform === "rumble" && locale === "en") return {
+    title: "Rumble Video Downloader — Download Rumble Videos | toTube",
+    description: "Download Rumble videos online in MP4 or convert a public Rumble video to MP3. Fast Rumble video downloader with no software or account required.",
+  };
   return {
     title: `${ui.title(name)} — ${ui.accent.replace(/\.$/, "")} | toTube`,
     description: ui.description(name),
@@ -127,15 +132,24 @@ export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; pl
   const copy = homeCopy[locale];
   const name = platformNames[platform];
   const canonical = `https://totube.online${platformPath(locale, platform)}`;
-  const faqs = [
+  const genericFaqs = [
     { question: ui.faqPublic(name), answer: ui.faqPublicAnswer(name) },
     { question: ui.faqFormat, answer: ui.faqFormatAnswer },
     { question: ui.faqPrivate, answer: ui.faqPrivateAnswer },
     { question: platformSpecific[locale][platform].title, answer: platformSpecific[locale][platform].text },
   ];
+  const faqs = platform === "rumble" && locale === "en" ? [
+    { question: "How do I download a Rumble video?", answer: "Copy the public Rumble video URL, paste it into the downloader above, choose MP4 or an audio format, then download the verified file." },
+    { question: "Is this Rumble video downloader free?", answer: "Yes. The Rumble downloader works online without an account or software for compatible public videos." },
+    { question: "Can a Rumble video download be converted to MP3?", answer: "Yes. Choose MP3, M4A, WAV, AAC, FLAC or OPUS to create a real audio file from a supported public Rumble video." },
+    { question: "Can I download Rumble live streams or private videos?", answer: "No. Active live streams, removed videos, private media and members-only content are not accessible." },
+  ] : genericFaqs;
+  const heroTitle = platform === "rumble" && locale === "en" ? "Rumble video downloader" : ui.title(name);
+  const heroAccent = platform === "rumble" && locale === "en" ? "download Rumble videos online." : ui.accent;
+  const description = platformMetadataText(locale, platform).description;
   const faqSchema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
   const breadcrumbSchema = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: ui.home, item: `https://totube.online/${locale}` }, { "@type": "ListItem", position: 2, name: ui.title(name), item: canonical }] };
-  const applicationSchema = { "@context": "https://schema.org", "@type": "WebApplication", name: `${name} downloader by toTube`, url: canonical, description: ui.description(name), applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, featureList: [`Public ${name} video links`, "MP4 output up to 1080p", "Six audio output formats"] };
+  const applicationSchema = { "@context": "https://schema.org", "@type": "WebApplication", name: `${heroTitle} by toTube`, url: canonical, description, applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, featureList: [`Public ${name} video links`, "MP4 output up to 1080p", "Six audio output formats"] };
 
   return (
     <main className="seo-page" dir={copy.dir}>
@@ -145,15 +159,15 @@ export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; pl
       <header className="site-header seo-header">
         <Link href={`/${locale}`} className="brand" aria-label="toTube"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link>
         <ToolNavigation locale={locale} currentPlatform={platform} />
-        <Link className="nav-cta" href={`/${locale}#converter`}>{ui.convert} <ArrowRight size={15} /></Link>
+        <Link className="nav-cta" href="#converter">{ui.convert} <ArrowRight size={15} /></Link>
       </header>
 
-      <section className="seo-hero">
+      <section className="seo-hero platform-tool-hero">
         <nav className="breadcrumbs" aria-label="Breadcrumb"><Link href={`/${locale}`}>{ui.home}</Link><span>/</span><span>{name}</span></nav>
         <span className="section-kicker">{name} downloader</span>
-        <h1>{ui.title(name)}<br /><em>{ui.accent}</em></h1>
-        <p>{ui.description(name)}</p>
-        <Link href={`/${locale}#converter`} className="seo-primary-cta">{ui.convert} <ArrowRight size={18} /></Link>
+        <h1>{heroTitle}<br /><em>{heroAccent}</em></h1>
+        <p>{description}</p>
+        <InlinePlatformConverter locale={locale} platform={platform} />
         <div className="seo-trust"><span><Check size={15} /> {ui.free}</span><span><Check size={15} /> {ui.noSignup}</span><span><Check size={15} /> {ui.formats}</span></div>
       </section>
 
@@ -169,7 +183,7 @@ export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; pl
           <section><h2>{ui.howTitle(name)}</h2><p>{ui.steps(name)}</p></section>
           <section><h2>{platformSpecific[locale][platform].title}</h2><p>{platformSpecific[locale][platform].text}</p></section>
           <section><h2>{ui.limitsTitle}</h2><p>{ui.limits(name)}</p></section>
-          <aside className="seo-callout"><span><FileAudio /></span><div><strong>{copy.chooseFormat}</strong><p>MP3 · MP4 · M4A · WAV · AAC · FLAC · OPUS</p></div><Link href={`/${locale}#converter`}>{ui.convert} <ArrowRight size={15} /></Link></aside>
+          <aside className="seo-callout"><span><FileAudio /></span><div><strong>{copy.chooseFormat}</strong><p>MP3 · MP4 · M4A · WAV · AAC · FLAC · OPUS</p></div><Link href="#converter">{ui.convert} <ArrowRight size={15} /></Link></aside>
         </div>
       </article>
 

@@ -20,7 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (platform) {
     const text = platformMetadataText(locale, platform);
     const canonical = `https://totube.online${platformPath(locale, platform)}`;
-    return { title: text.title, description: text.description, keywords: [`${platform} downloader`, `${platform} video downloader`, `${platform} to mp3`, `${platform} mp4`, "free video downloader", "online video converter"], alternates: { canonical, languages: languageAlternates(platform) }, openGraph: { title: text.title, description: text.description, url: canonical, type: "website" } };
+    const keywords = platform === "rumble" ? ["download rumble video", "rumble downloader", "rumble video download", "rumble video downloader", "download rumble", "rumble to mp3", "rumble mp4"] : [`${platform} downloader`, `${platform} video downloader`, `${platform} to mp3`, `${platform} mp4`, "free video downloader", "online video converter"];
+    return { title: text.title, description: text.description, keywords, alternates: { canonical, languages: languageAlternates(platform) }, openGraph: { title: text.title, description: text.description, url: canonical, type: "website" } };
   }
   const qualityPage = qualityPageForSlug(locale, slug);
   if (!qualityPage) return {};

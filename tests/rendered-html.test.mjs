@@ -145,6 +145,7 @@ const localizedPlatformPages = [
   ["/de/youtube-video-herunterladen", "de", "YouTube-Videos herunterladen"],
   ["/fr/telecharger-video-rumble", "fr", "Télécharger une vidéo Rumble"],
   ["/en/download-threads-video", "en", "Download Threads videos"],
+  ["/en/download-rumble-video", "en", "Rumble video downloader"],
 ];
 
 for (const [pathname, lang, heading] of localizedPlatformPages) {
@@ -160,8 +161,20 @@ for (const [pathname, lang, heading] of localizedPlatformPages) {
     assert.match(html, /"@type":"WebApplication"/i);
     assert.match(html, /class="tool-navigation"/i);
     assert.match(html, /class="tool-footer"/i);
+    assert.match(html, /class="seo-inline-converter"/i);
   });
 }
+
+test("targets the supplied Rumble keyword cluster with useful page content", async () => {
+  const response = await render("/en/download-rumble-video");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<title>Rumble Video Downloader — Download Rumble Videos \| toTube<\/title>/i);
+  assert.match(html, /name="keywords" content="[^"]*download rumble video[^"]*rumble downloader[^"]*rumble video download/i);
+  assert.match(html, /How do I download a Rumble video\?/i);
+  assert.match(html, /Rumble video downloader for MP4 and MP3/i);
+  assert.match(html, /placeholder="https:\/\/rumble\.com\/v…-video\.html"/i);
+});
 
 test("legacy French platform URL redirects to its localized replacement", async () => {
   const response = await render("/telecharger-video-tiktok");
