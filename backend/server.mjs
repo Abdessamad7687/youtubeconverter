@@ -38,6 +38,8 @@ const YTDLP_PROXY_HOSTS = [...new Set((process.env.YTDLP_PROXY_HOSTS || "youtube
   .filter(Boolean))];
 const FFMPEG_BIN = process.env.FFMPEG_BIN || "ffmpeg";
 const FFPROBE_BIN = process.env.FFPROBE_BIN || "ffprobe";
+const YTDLP_FFMPEG_LOCATION = process.env.YTDLP_FFMPEG_LOCATION?.trim()
+  || (FFMPEG_BIN.includes("/") ? resolve(FFMPEG_BIN, "..") : "");
 const MAX_DURATION = Number(process.env.MAX_DURATION_SECONDS || 1200);
 const MAX_FILESIZE = process.env.MAX_FILESIZE || "500M";
 const FILE_TTL_MS = Number(process.env.FILE_TTL_MINUTES || 30) * 60_000;
@@ -213,6 +215,23 @@ function shouldUseProxy(inputUrl) {
   }
 }
 
+function isYouTubeUrl(inputUrl) {
+  try {
+    const host = new URL(inputUrl).hostname.toLowerCase().replace(/^www\./, "");
+    return hostMatches(host, "youtube.com") || hostMatches(host, "youtu.be");
+  } catch {
+    return false;
+  }
+}
+
+function withFormat(args, selector) {
+  const nextArgs = [...args];
+  const formatIndex = nextArgs.indexOf("--format");
+  if (formatIndex === -1) nextArgs.push("--format", selector);
+  else nextArgs[formatIndex + 1] = selector;
+  return nextArgs;
+}
+
 function orderedProxies(inputUrl) {
   if (!shouldUseProxy(inputUrl)) return [];
   if (!YTDLP_PROXIES.length) return [];
@@ -223,7 +242,7 @@ function orderedProxies(inputUrl) {
   return [...available.slice(start), ...available.slice(0, start)];
 }
 
-async function runYtDlp(args, inputUrl) {
+async function runYtDlp(args, inputUrl, { stopOnMediaFailure = false } = {}) {
   const proxyRequired = shouldUseProxy(inputUrl);
   const proxies = orderedProxies(inputUrl);
   if (proxyRequired && !proxies.length) {
@@ -243,6 +262,12 @@ async function runYtDlp(args, inputUrl) {
         throw new ConverterError(
           "youtube.authentication_required",
           "YouTube demande une authentification pour cette vidéo. Utilisez l’option de téléversement pour convertir un fichier que vous êtes autorisé à utiliser.",
+        );
+      }
+      if (proxy && stopOnMediaFailure && isProxyMediaFailure(error)) {
+        throw new ConverterError(
+          "youtube.adaptive_stream_unavailable",
+          "Le flux adaptatif YouTube n’est pas disponible sur cette sortie.",
         );
       }
       if (!proxy || (!isTransportFailure(error) && !isProxyMediaFailure(error))) throw error;
@@ -374,6 +399,8 @@ async function convert(request, body) {
     "--print", "after_move:filepath",
   ];
 
+  if (YTDLP_FFMPEG_LOCATION) args.push("--ffmpeg-location", YTDLP_FFMPEG_LOCATION);
+
   if (!source.referer) args.push("--match-filter", `duration <= ${MAX_DURATION} & !is_live`);
 
   if (YTDLP_COOKIES_FILE) args.push("--cookies", YTDLP_COOKIES_FILE);
@@ -392,6 +419,9 @@ async function convert(request, body) {
       "--remux-video", "mp4",
     );
   } else {
+    if (isYouTubeUrl(url)) {
+      args.push("--format", "b[ext=mp4][vcodec^=avc1][acodec^=mp4a]/b[acodec!=none]/b");
+    }
     const quality = ["wav", "flac"].includes(format) ? "0" : `${audioBitrate}K`;
     args.push("--extract-audio", "--audio-format", format, "--audio-quality", quality, "--embed-metadata");
   }
@@ -400,7 +430,17 @@ async function convert(request, body) {
 
   activeJobs += 1;
   try {
-    const result = await runYtDlp(args, url);
+    let result;
+    try {
+      result = await runYtDlp(args, url, { stopOnMediaFailure: format === "mp4" && isYouTubeUrl(url) });
+    } catch (error) {
+      if (!(error instanceof ConverterError) || error.code !== "youtube.adaptive_stream_unavailable") throw error;
+      const progressiveArgs = withFormat(
+        args,
+        "b[ext=mp4][vcodec^=avc1][acodec^=mp4a]/b[ext=mp4][acodec!=none]/b[acodec!=none]/b",
+      );
+      result = await runYtDlp(progressiveArgs, url);
+    }
     const printedPaths = result.stdout.split("\n").map((line) => line.trim()).filter(Boolean);
     let filePath = printedPaths.reverse().find((line) => existsSync(line) && resolve(line).startsWith(`${jobDir}/`));
     if (!filePath) {

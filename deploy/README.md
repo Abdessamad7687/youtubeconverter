@@ -15,6 +15,7 @@ YTDLP_PLUGIN_DIRS=/opt/totube/yt-dlp-plugins
 YTDLP_PO_TOKEN_PROVIDER_URL=http://127.0.0.1:4416
 YTDLP_YOUTUBE_PLAYER_CLIENT=mweb
 YTDLP_PROXY_HOSTS=youtube.com,youtu.be
+YTDLP_FFMPEG_LOCATION=/opt/totube/bin
 ```
 
 Port 4416 is an internal implementation detail and must not be exposed by

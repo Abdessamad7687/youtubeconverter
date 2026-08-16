@@ -34,6 +34,13 @@ the public internet. A PO token improves public-video playback requests but
 does not grant access to private, paid, age-restricted, or otherwise protected
 media.
 
+The converter first requests the selected adaptive quality. When YouTube's CDN
+rejects that stream even with a valid PO token, MP4 conversion falls back to a
+combined H.264/AAC stream on the same healthy route. Audio conversion uses the
+combined stream as its source so MP3/M4A output remains available when DASH
+audio URLs are rejected. Set `YTDLP_FFMPEG_LOCATION` when yt-dlp and FFmpeg are
+installed outside the system `PATH`.
+
 ## Run locally
 
 From the repository root, use `npm run dev`. The frontend starts on port 3000

@@ -21,6 +21,8 @@ ProtectControlGroups=true
 RestrictSUIDSGID=true
 LockPersonality=true
 MemoryMax=512M
+StandardOutput=null
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
