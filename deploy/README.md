@@ -20,3 +20,7 @@ YTDLP_FFMPEG_LOCATION=/opt/totube/bin
 
 Port 4416 is an internal implementation detail and must not be exposed by
 Nginx or the host firewall.
+
+`totube.online.nginx.conf` is the production reverse-proxy configuration. Test
+it with `nginx -t` before reloading Nginx; it keeps long conversion/download
+timeouts while adding transport and browser security headers.
