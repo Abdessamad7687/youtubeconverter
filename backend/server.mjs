@@ -7,7 +7,7 @@ import { basename, extname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { isTransportFailure, isYouTubeChallenge } from "./proxy-policy.mjs";
+import { isProxyMediaFailure, isTransportFailure, isYouTubeChallenge } from "./proxy-policy.mjs";
 import { isThreadsUrl, resolveThreadsVideo } from "./threads-policy.mjs";
 
 const PORT = Number(process.env.PORT || 8788);
@@ -26,6 +26,16 @@ const YTDLP_PROXIES = [...new Set([
 const YTDLP_COOKIES_FILE = process.env.YTDLP_COOKIES_FILE?.trim();
 const YTDLP_JS_RUNTIME = process.env.YTDLP_JS_RUNTIME?.trim() || "node";
 const YTDLP_EXTRACTOR_ARGS = process.env.YTDLP_EXTRACTOR_ARGS?.trim();
+const YTDLP_PLUGIN_DIRS = [...new Set((process.env.YTDLP_PLUGIN_DIRS || "")
+  .split(/[\n,;]+/)
+  .map((directory) => directory.trim())
+  .filter(Boolean))];
+const YTDLP_PO_TOKEN_PROVIDER_URL = process.env.YTDLP_PO_TOKEN_PROVIDER_URL?.trim().replace(/\/$/, "");
+const YTDLP_YOUTUBE_PLAYER_CLIENT = process.env.YTDLP_YOUTUBE_PLAYER_CLIENT?.trim() || "mweb";
+const YTDLP_PROXY_HOSTS = [...new Set((process.env.YTDLP_PROXY_HOSTS || "youtube.com,youtu.be")
+  .split(/[\n,;]+/)
+  .map((host) => host.trim().toLowerCase().replace(/^www\./, ""))
+  .filter(Boolean))];
 const FFMPEG_BIN = process.env.FFMPEG_BIN || "ffmpeg";
 const FFPROBE_BIN = process.env.FFPROBE_BIN || "ffprobe";
 const MAX_DURATION = Number(process.env.MAX_DURATION_SECONDS || 1200);
@@ -189,7 +199,22 @@ async function resolveSourceUrl(url) {
   }
 }
 
-function orderedProxies() {
+function hostMatches(host, allowed) {
+  return host === allowed || host.endsWith(`.${allowed}`);
+}
+
+function shouldUseProxy(inputUrl) {
+  if (!YTDLP_PROXIES.length) return false;
+  try {
+    const host = new URL(inputUrl).hostname.toLowerCase().replace(/^www\./, "");
+    return YTDLP_PROXY_HOSTS.some((allowed) => hostMatches(host, allowed));
+  } catch {
+    return false;
+  }
+}
+
+function orderedProxies(inputUrl) {
+  if (!shouldUseProxy(inputUrl)) return [];
   if (!YTDLP_PROXIES.length) return [];
   const now = Date.now();
   const available = YTDLP_PROXIES.filter((proxy) => (proxyCooldowns.get(proxy) || 0) <= now);
@@ -198,9 +223,10 @@ function orderedProxies() {
   return [...available.slice(start), ...available.slice(0, start)];
 }
 
-async function runYtDlp(args) {
-  const proxies = orderedProxies();
-  if (YTDLP_PROXIES.length && !proxies.length) {
+async function runYtDlp(args, inputUrl) {
+  const proxyRequired = shouldUseProxy(inputUrl);
+  const proxies = orderedProxies(inputUrl);
+  if (proxyRequired && !proxies.length) {
     throw new ConverterError(
       "network.proxy_unavailable",
       "Le réseau de conversion est temporairement indisponible. Vous pouvez téléverser votre fichier maintenant ou réessayer plus tard.",
@@ -219,7 +245,7 @@ async function runYtDlp(args) {
           "YouTube demande une authentification pour cette vidéo. Utilisez l’option de téléversement pour convertir un fichier que vous êtes autorisé à utiliser.",
         );
       }
-      if (!proxy || !isTransportFailure(error)) throw error;
+      if (!proxy || (!isTransportFailure(error) && !isProxyMediaFailure(error))) throw error;
       proxyCooldowns.set(proxy, Date.now() + PROXY_COOLDOWN_MS);
     }
   }
@@ -351,6 +377,11 @@ async function convert(request, body) {
   if (!source.referer) args.push("--match-filter", `duration <= ${MAX_DURATION} & !is_live`);
 
   if (YTDLP_COOKIES_FILE) args.push("--cookies", YTDLP_COOKIES_FILE);
+  for (const directory of YTDLP_PLUGIN_DIRS) args.push("--plugin-dirs", directory);
+  if (YTDLP_PO_TOKEN_PROVIDER_URL) {
+    args.push("--extractor-args", `youtubepot-bgutilhttp:base_url=${YTDLP_PO_TOKEN_PROVIDER_URL}`);
+    args.push("--extractor-args", `youtube:player_client=${YTDLP_YOUTUBE_PLAYER_CLIENT}`);
+  }
   if (YTDLP_EXTRACTOR_ARGS) args.push("--extractor-args", YTDLP_EXTRACTOR_ARGS);
 
   if (format === "mp4") {
@@ -369,7 +400,7 @@ async function convert(request, body) {
 
   activeJobs += 1;
   try {
-    const result = await runYtDlp(args);
+    const result = await runYtDlp(args, url);
     const printedPaths = result.stdout.split("\n").map((line) => line.trim()).filter(Boolean);
     let filePath = printedPaths.reverse().find((line) => existsSync(line) && resolve(line).startsWith(`${jobDir}/`));
     if (!filePath) {
@@ -532,6 +563,11 @@ const server = createServer(async (request, response) => {
         formats: ["mp3", "m4a", "mp4", "wav", "aac", "flac", "opus"],
         activeJobs,
         proxyPool: { configured: YTDLP_PROXIES.length, coolingDown: [...proxyCooldowns.values()].filter((until) => until > Date.now()).length },
+        youtubeRuntime: {
+          poTokenProvider: Boolean(YTDLP_PO_TOKEN_PROVIDER_URL),
+          playerClient: YTDLP_PO_TOKEN_PROVIDER_URL ? YTDLP_YOUTUBE_PLAYER_CLIENT : null,
+          proxyHosts: YTDLP_PROXY_HOSTS,
+        },
       });
     }
     if (request.method === "GET" && url.pathname === "/health") return json(response, 200, { ok: true });

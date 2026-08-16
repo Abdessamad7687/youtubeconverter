@@ -1,4 +1,11 @@
 services:
+  pot-provider:
+    image: brainicism/bgutil-ytdlp-pot-provider:latest
+    restart: unless-stopped
+    init: true
+    expose:
+      - "4416"
+
   totube-converter:
     build: .
     restart: unless-stopped
@@ -14,5 +21,12 @@ services:
       FILE_TTL_MINUTES: ${FILE_TTL_MINUTES:-30}
       MAX_CONCURRENT_JOBS: ${MAX_CONCURRENT_JOBS:-2}
       RATE_LIMIT_PER_HOUR: ${RATE_LIMIT_PER_HOUR:-12}
+      YTDLP_PO_TOKEN_PROVIDER_URL: http://pot-provider:4416
+      YTDLP_YOUTUBE_PLAYER_CLIENT: ${YTDLP_YOUTUBE_PLAYER_CLIENT:-mweb}
+      YTDLP_PROXY_HOSTS: ${YTDLP_PROXY_HOSTS:-youtube.com,youtu.be}
+      YTDLP_PROXIES: ${YTDLP_PROXIES:-}
+      YTDLP_PROXY_COOLDOWN_SECONDS: ${YTDLP_PROXY_COOLDOWN_SECONDS:-300}
+    depends_on:
+      - pot-provider
     tmpfs:
       - /var/tmp/totube:size=2G,mode=1777

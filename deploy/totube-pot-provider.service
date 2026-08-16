@@ -1,0 +1,26 @@
+[Unit]
+Description=toTube YouTube PO Token Provider
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=totube
+Group=totube
+WorkingDirectory=/opt/totube/pot-provider-1.3.1/server
+ExecStart=/usr/bin/node build/main.js --port 4416
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

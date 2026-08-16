@@ -2,11 +2,11 @@ FROM node:24-bookworm-slim
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ffmpeg python3 python3-pip ca-certificates \
-  && pip3 install --break-system-packages --no-cache-dir "yt-dlp[default]" \
+  && pip3 install --break-system-packages --no-cache-dir "yt-dlp[default]" bgutil-ytdlp-pot-provider \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY server.mjs ./server.mjs
+COPY *.mjs ./
 
 RUN useradd --create-home --uid 10001 totube \
   && mkdir -p /var/tmp/totube \
