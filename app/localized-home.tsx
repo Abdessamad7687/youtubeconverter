@@ -22,7 +22,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import AdBanner, { AD_KEYS } from "./ad-banner";
+import AdBanner from "./ad-banner";
+import { AD_KEYS } from "./ad-config";
 import { homeCopy, Locale, locales, localizedSlugs, platformIds, platformNames, platformPath, qualityPagePath } from "./i18n";
 import { openSmartLink } from "./smartlink";
 import { FormatMenu, PlatformMenu } from "./tool-navigation";

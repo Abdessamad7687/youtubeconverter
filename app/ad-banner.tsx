@@ -2,11 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export const AD_KEYS = {
-  leaderboard: "5321f0adf5a727cf9500e1e0bce95ca9",
-  compact: "4ed5c4bd0900ef9380332764b589781a",
-} as const;
-
 export default function AdBanner({ adKey, width, height, label }: { adKey: string; width: number; height: number; label: string }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);

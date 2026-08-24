@@ -1,6 +1,7 @@
 import { ArrowRight, Check, Download, FileAudio, FileVideo, Link2, Play, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
-import AdBanner, { AD_KEYS } from "./ad-banner";
+import AdBanner from "./ad-banner";
+import { AD_KEYS } from "./ad-config";
 
 export type SeoPageContent = {
   slug: string;

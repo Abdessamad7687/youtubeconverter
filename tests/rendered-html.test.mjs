@@ -100,6 +100,9 @@ for (const [pathname, lang, heading] of localizedQualityPages) {
     assert.match(html, /class="tool-footer"/i);
     assert.match(html, /"@type":"BreadcrumbList"/i);
     assert.match(html, /ad-banner-[^"']+\.js/i);
+    assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
+    assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
+    assert.doesNotMatch(html, /highperformanceformat\.com\/undefined/i);
   });
 }
 
@@ -135,6 +138,9 @@ for (const [pathname, title, heading] of landingPages) {
     assert.match(html, /"@type":"FAQPage"/i);
     assert.match(html, /"@type":"BreadcrumbList"/i);
     assert.match(html, /ad-banner-[^"']+\.js/i);
+    assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
+    assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
+    assert.doesNotMatch(html, /highperformanceformat\.com\/undefined/i);
   });
 }
 
@@ -165,6 +171,9 @@ for (const [pathname, lang, heading] of localizedPlatformPages) {
     assert.match(html, /class="tool-footer"/i);
     assert.match(html, /class="seo-inline-converter"/i);
     assert.match(html, /ad-banner-[^"']+\.js/i);
+    assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
+    assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
+    assert.doesNotMatch(html, /highperformanceformat\.com\/undefined/i);
   });
 }
 

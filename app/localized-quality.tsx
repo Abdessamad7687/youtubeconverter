@@ -1,6 +1,7 @@
 import { ArrowRight, Check, FileAudio, FileVideo, Gauge, Play, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import AdBanner, { AD_KEYS } from "./ad-banner";
+import AdBanner from "./ad-banner";
+import { AD_KEYS } from "./ad-config";
 import { homeCopy, Locale, platformPath, qualityPagePath, QualityPageId } from "./i18n";
 import { ToolFooter, ToolNavigation } from "./tool-navigation";
 
