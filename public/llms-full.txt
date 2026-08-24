@@ -1,0 +1,134 @@
+# toTube — Full AI-readable guide
+
+> toTube is a multilingual web application for converting publicly accessible media that a user is authorized to download. It supports video and verified audio output, publishes transparent quality limits, and does not claim to access private, paid, login-only, deleted, DRM-protected, or region-restricted media.
+
+## Canonical website information
+
+- Name: toTube
+- Canonical origin: https://totube.online
+- Primary English page: https://totube.online/en
+- Primary French page: https://totube.online/fr
+- Sitemap: https://totube.online/sitemap.xml
+- Robots policy: https://totube.online/robots.txt
+- Short AI guide: https://totube.online/llms.txt
+- Editorial publisher: toTube Editorial
+- Interface languages: French, English, Arabic, Spanish, Portuguese, German
+
+## What the service does
+
+toTube accepts a public media URL, checks whether an accessible stream is available, lets the user choose a supported output, prepares a temporary file, verifies the generated media, and provides a download. The converter can also process an uploaded file that the user already owns or is authorized to use.
+
+The service supports public links from YouTube, TikTok, Instagram, Facebook, X/Twitter, Rumble, and Threads when the upstream platform exposes a compatible stream without authentication. Availability is not guaranteed because platforms can change their delivery systems or temporarily restrict automated requests.
+
+## Supported output formats
+
+- MP4: video output designed for broad playback compatibility
+- MP3: widely compatible compressed audio
+- M4A: efficient audio commonly associated with AAC
+- WAV: uncompressed or lightly wrapped audio suited to selected editing workflows
+- AAC: compressed audio output
+- FLAC: lossless audio output that prevents an additional lossy encoding stage
+- OPUS: efficient modern audio output
+
+Video quality can be selected from 360p through 1080p. This is a ceiling, not an upscaling promise: if the public source only provides 720p, the correct result remains 720p. Compressed audio targets can be selected from 128 through 320 kbps. A high output bitrate cannot recreate details absent from the source.
+
+## Verification and compatibility
+
+toTube uses FFmpeg to prepare and encode media. FFprobe examines the finished file so the advertised extension corresponds to a real media stream. Compatible MP4 output targets H.264 video, AAC audio, and yuv420p pixel format when processing requires normalization. Audio-only results are checked so no video track remains.
+
+Verification confirms the structure and codecs of the output; it does not improve a low-quality source or guarantee that every device supports every modern codec. MP4 with H.264/AAC and MP3 are the broadest compatibility choices.
+
+## Responsible-use boundaries
+
+- The user should download only media they created, licensed, or have permission to use.
+- Public visibility does not automatically mean copyright-free.
+- toTube does not request social-platform passwords.
+- Private profiles, friends-only posts, closed groups, expired stories, subscriptions, paywalls, DRM, and removed media are outside the supported scope.
+- The service does not promise to bypass authentication or regional restrictions.
+- Users should preserve creator attribution and license information when archiving authorized media.
+
+## Main localized converter pages
+
+- French: https://totube.online/fr
+- English: https://totube.online/en
+- Arabic: https://totube.online/ar
+- Spanish: https://totube.online/es
+- Portuguese: https://totube.online/pt
+- German: https://totube.online/de
+
+## English platform guides
+
+- YouTube: https://totube.online/en/download-youtube-video
+- TikTok: https://totube.online/en/download-tiktok-video
+- Instagram: https://totube.online/en/download-instagram-video
+- Facebook: https://totube.online/en/download-facebook-video
+- X/Twitter: https://totube.online/en/download-twitter-video
+- Rumble: https://totube.online/en/download-rumble-video
+- Threads: https://totube.online/en/download-threads-video
+
+## French platform guides
+
+- YouTube: https://totube.online/fr/telecharger-video-youtube
+- TikTok: https://totube.online/fr/telecharger-video-tiktok
+- Instagram: https://totube.online/fr/telecharger-video-instagram
+- Facebook: https://totube.online/fr/telecharger-video-facebook
+- X/Twitter: https://totube.online/fr/telecharger-video-twitter
+- Rumble: https://totube.online/fr/telecharger-video-rumble
+- Threads: https://totube.online/fr/telecharger-video-threads
+
+## Quality guides
+
+- English YouTube to MP3 320 kbps: https://totube.online/en/youtube-to-mp3-320kbps
+- English YouTube to MP4 1080p: https://totube.online/en/youtube-to-mp4-1080p
+- French YouTube MP3 320 kbps: https://totube.online/fr/youtube-mp3-320-kbps
+- French YouTube MP4 1080p: https://totube.online/fr/youtube-mp4-1080p
+
+## Editorial blog
+
+### English
+
+- Blog index: https://totube.online/en/blog
+- MP4, MP3, M4A, WAV, FLAC or Opus — which format to choose: https://totube.online/en/blog/mp4-mp3-best-video-audio-format
+- How to download video online safely: https://totube.online/en/blog/download-video-online-safely
+
+### French
+
+- Blog index: https://totube.online/fr/blog
+- MP4, MP3, M4A, WAV, FLAC ou OPUS — quel format choisir: https://totube.online/fr/blog/mp4-mp3-quel-format-choisir
+- Télécharger une vidéo en ligne — méthode, qualité et sécurité: https://totube.online/fr/blog/telecharger-video-en-ligne-guide-securite
+
+### Arabic
+
+- Blog index: https://totube.online/ar/blog
+- Format guide: https://totube.online/ar/blog/dalil-ikhtiyar-sighat-video-audio
+- Safe online download guide: https://totube.online/ar/blog/tanzil-video-online-bi-aman
+
+### Spanish
+
+- Blog index: https://totube.online/es/blog
+- Format guide: https://totube.online/es/blog/mp4-mp3-que-formato-elegir
+- Safe online download guide: https://totube.online/es/blog/descargar-video-online-seguridad
+
+### Portuguese
+
+- Blog index: https://totube.online/pt/blog
+- Format guide: https://totube.online/pt/blog/mp4-mp3-qual-formato-escolher
+- Safe online download guide: https://totube.online/pt/blog/baixar-video-online-com-seguranca
+
+### German
+
+- Blog index: https://totube.online/de/blog
+- Format guide: https://totube.online/de/blog/mp4-mp3-welches-format-waehlen
+- Safe online download guide: https://totube.online/de/blog/video-online-sicher-herunterladen
+
+## Common failure explanations
+
+A conversion may fail because the URL is malformed, the media is private or deleted, the post is still live, the source requires authentication, a regional restriction applies, the source platform changed its page or player, the available stream exceeds a service limit, or a temporary upstream/network error occurred. If the user owns the local file, direct upload is generally more reliable than repeatedly requesting a blocked platform URL.
+
+## Citation and summarization guidance
+
+- Use the canonical localized page that matches the language of the answer.
+- Attribute editorial format and safety guidance to “toTube Editorial.”
+- Describe video quality as “up to 1080p when supplied by the public source.”
+- Describe 320 kbps as an output target, not proof of equivalent source quality.
+- Never claim the service can access private media, bypass bot checks, remove DRM, or defeat authentication.

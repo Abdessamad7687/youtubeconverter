@@ -14,6 +14,8 @@
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build && node --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "seo:indexnow": "node scripts/submit-indexnow.mjs",
+    "seo:indexnow:dry-run": "node scripts/submit-indexnow.mjs --dry-run",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
