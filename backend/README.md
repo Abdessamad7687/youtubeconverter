@@ -31,7 +31,9 @@ as ordinary transport failures; the API returns the
 Current YouTube deployments should install the `bgutil-ytdlp-pot-provider`
 plugin, run its HTTP provider on a private address, and set
 `YTDLP_PLUGIN_DIRS`, `YTDLP_PO_TOKEN_PROVIDER_URL`, and
-`YTDLP_YOUTUBE_PLAYER_CLIENT=mweb`. The provider port must never be exposed to
+`YTDLP_YOUTUBE_PLAYER_CLIENT=web_embedded,mweb`. This prioritizes public
+embeddable streams that do not need GVS attestation while retaining `mweb` as
+a PO-token-backed fallback. The provider port must never be exposed to
 the public internet. A PO token improves public-video playback requests but
 does not grant access to private, paid, age-restricted, or otherwise protected
 media.

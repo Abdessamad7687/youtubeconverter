@@ -31,7 +31,7 @@ const YTDLP_PLUGIN_DIRS = [...new Set((process.env.YTDLP_PLUGIN_DIRS || "")
   .map((directory) => directory.trim())
   .filter(Boolean))];
 const YTDLP_PO_TOKEN_PROVIDER_URL = process.env.YTDLP_PO_TOKEN_PROVIDER_URL?.trim().replace(/\/$/, "");
-const YTDLP_YOUTUBE_PLAYER_CLIENT = process.env.YTDLP_YOUTUBE_PLAYER_CLIENT?.trim() || "mweb";
+const YTDLP_YOUTUBE_PLAYER_CLIENT = process.env.YTDLP_YOUTUBE_PLAYER_CLIENT?.trim() || "web_embedded,mweb";
 const YTDLP_PROXY_HOSTS = [...new Set((process.env.YTDLP_PROXY_HOSTS || "youtube.com,youtu.be")
   .split(/[\n,;]+/)
   .map((host) => host.trim().toLowerCase().replace(/^www\./, ""))
