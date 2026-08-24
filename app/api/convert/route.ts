@@ -177,12 +177,16 @@ export async function POST(request: NextRequest) {
 
     const clientIp = (request.headers.get("cf-connecting-ip") || request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for") || "").split(",")[0].trim();
     const converted = await requestConverter(url, body.format, videoQuality, audioQuality, clientIp);
+    const deliveredHeight = converted.videoHeight || null;
+    const videoNote = deliveredHeight && deliveredHeight < videoQuality
+      ? `MP4 compatible ${deliveredHeight}p — meilleure qualité disponible pour cette source`
+      : `MP4 compatible ${deliveredHeight ? `${deliveredHeight}p` : `jusqu’à ${videoQuality}p`}, fichier vérifié`;
     return NextResponse.json({
       download: {
         url: converted.url,
         filename: converted.filename || safeFilename(media.title, body.format),
         note: body.format === "mp4"
-          ? `MP4 compatible ${converted.videoHeight ? `${converted.videoHeight}p` : `jusqu’à ${videoQuality}p`}, fichier vérifié`
+          ? videoNote
           : `${body.format.toUpperCase()} ${["wav", "flac"].includes(body.format) ? "sans perte" : `${audioQuality} kbps`}, fichier vérifié`,
       },
     });

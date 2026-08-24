@@ -249,6 +249,7 @@ async function runYtDlp(args, inputUrl, { stopOnMediaFailure = false } = {}) {
   }
   const attempts = proxies.length ? proxies : [null];
   let sawYouTubeChallenge = false;
+  let sawAdaptiveStreamFailure = false;
   for (const proxy of attempts) {
     const attemptArgs = [...args];
     if (proxy) attemptArgs.splice(Math.max(0, attemptArgs.length - 1), 0, "--proxy", proxy);
@@ -267,14 +268,19 @@ async function runYtDlp(args, inputUrl, { stopOnMediaFailure = false } = {}) {
         );
       }
       if (proxy && stopOnMediaFailure && isProxyMediaFailure(error)) {
-        throw new ConverterError(
-          "youtube.adaptive_stream_unavailable",
-          "Le flux adaptatif YouTube n’est pas disponible sur cette sortie.",
-        );
+        sawAdaptiveStreamFailure = true;
+        proxyCooldowns.set(proxy, Date.now() + PROXY_COOLDOWN_MS);
+        continue;
       }
       if (!proxy || (!isTransportFailure(error) && !isProxyMediaFailure(error))) throw error;
       proxyCooldowns.set(proxy, Date.now() + PROXY_COOLDOWN_MS);
     }
+  }
+  if (sawAdaptiveStreamFailure) {
+    throw new ConverterError(
+      "youtube.adaptive_stream_unavailable",
+      "Le flux adaptatif YouTube n’est disponible sur aucune route active.",
+    );
   }
   if (sawYouTubeChallenge) {
     throw new ConverterError(

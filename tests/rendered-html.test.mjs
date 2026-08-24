@@ -134,6 +134,7 @@ for (const [pathname, title, heading] of landingPages) {
     assert.match(html, new RegExp(`rel="canonical" href="https://totube\\.online${pathname}`));
     assert.match(html, /"@type":"FAQPage"/i);
     assert.match(html, /"@type":"BreadcrumbList"/i);
+    assert.match(html, /ad-banner-[^"']+\.js/i);
   });
 }
 

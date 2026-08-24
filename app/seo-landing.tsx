@@ -1,5 +1,6 @@
 import { ArrowRight, Check, Download, FileAudio, FileVideo, Link2, Play, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
+import AdBanner, { AD_KEYS } from "./ad-banner";
 
 export type SeoPageContent = {
   slug: string;
@@ -70,6 +71,8 @@ export function SeoLandingPage({ content }: { content: SeoPageContent }) {
         <div className="seo-trust"><span><Check size={15} /> Gratuit</span><span><Check size={15} /> Sans inscription</span><span><Check size={15} /> MP3, M4A et MP4</span></div>
       </section>
 
+      <div className="seo-ad-band"><AdBanner adKey={AD_KEYS.leaderboard} width={728} height={90} label="Publicité" /></div>
+
       <section className="seo-benefits" aria-label="Avantages">
         {content.benefits.map((benefit) => (
           <article key={benefit.title}><span><BenefitIcon kind={benefit.kind} /></span><h2>{benefit.title}</h2><p>{benefit.text}</p></article>
@@ -88,6 +91,8 @@ export function SeoLandingPage({ content }: { content: SeoPageContent }) {
           <aside className="seo-callout"><span><Link2 /></span><div><strong>Prêt à convertir votre lien ?</strong><p>Collez l’URL, choisissez le format et récupérez votre fichier.</p></div><Link href="/#converter">Ouvrir le convertisseur <ArrowRight size={15} /></Link></aside>
         </div>
       </article>
+
+      <div className="seo-ad-band compact"><AdBanner adKey={AD_KEYS.compact} width={468} height={60} label="Publicité" /></div>
 
       <section className="seo-faq">
         <div><span className="section-kicker">Questions fréquentes</span><h2>Tout savoir<br />avant de convertir.</h2></div>
