@@ -1,0 +1,64 @@
+# Convertisseur vidéo universel
+
+> This site provides a comprehensive video and audio converter that supports multiple platforms like YouTube, TikTok, Instagram, Facebook, X, Rumble, and Threads, offering various formats such as MP3, MP4, WAV, AAC, FLAC, OPUS, and M4A.
+
+toTube offers a reliable and transparent tool for downloading and converting public videos and audio from popular social media platforms. It emphasizes quality control, format variety, and clear limitations, making it valuable for understanding media conversion, platform compatibility, and content accessibility.
+
+## Core Content
+
+[Convertisseur vidéo](https://totube.online/)
+> Central hub for video and audio conversion from multiple platforms into various formats.
+
+### Supported Platforms
+
+- YouTube
+- TikTok
+- Instagram
+- Facebook
+- X (Twitter)
+- Rumble
+- Threads
+
+### Conversion formats
+
+- MP3
+- MP4
+- M4A
+- WAV
+- AAC
+- FLAC
+- OPUS
+
+### How to convert
+
+- Paste a public URL
+- Select a video or audio format
+- Download the converted media
+
+### Technical validation
+
+- Uses FFprobe for format verification
+- Supports quality settings up to 1080p or 320 kbps when the source platform provides them
+
+## Resources
+
+- [Guide for YouTube downloads](https://totube.online/fr/telecharger-video-youtube)
+- [Guide for TikTok downloads](https://totube.online/fr/telecharger-video-tiktok)
+- [Guide for Instagram downloads](https://totube.online/fr/telecharger-video-instagram)
+- [Guide for Facebook downloads](https://totube.online/fr/telecharger-video-facebook)
+- [Guide for Twitter/X downloads](https://totube.online/fr/telecharger-video-twitter)
+- [Guide for Rumble downloads](https://totube.online/fr/telecharger-video-rumble)
+- [Guide for Threads downloads](https://totube.online/fr/telecharger-video-threads)
+
+## Limitations and best practices
+
+- Only public, accessible content can be downloaded
+- Private, paid, DRM-protected, deleted, login-only, or region-restricted media may be unavailable
+- Use only content you created or have permission to download and convert
+
+## Frequently asked questions
+
+- Supported platforms include popular sites with publicly accessible media streams
+- Available formats include video and verified audio outputs
+- Private or restricted videos cannot be downloaded
+- Conversion failures may result from regional restrictions, privacy settings, or upstream platform changes
