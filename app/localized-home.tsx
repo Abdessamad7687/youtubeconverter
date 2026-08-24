@@ -24,6 +24,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import AdBanner from "./ad-banner";
 import { AD_KEYS } from "./ad-config";
+import { blogIndexPath, blogUi } from "./blog-content";
 import { homeCopy, Locale, locales, localizedSlugs, platformIds, platformNames, platformPath, qualityPagePath } from "./i18n";
 import { openSmartLink } from "./smartlink";
 import { FormatMenu, PlatformMenu } from "./tool-navigation";
@@ -245,6 +246,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
           <a href="#faq" onClick={() => setMenuOpen(false)}>{copy.nav[2]}</a>
           <PlatformMenu locale={locale} />
           <FormatMenu locale={locale} />
+          <Link href={blogIndexPath(locale)} onClick={() => setMenuOpen(false)}>{blogUi[locale].nav}</Link>
           <LanguageSwitcher locale={locale} />
           <a href="#converter" className="nav-cta" onClick={() => setMenuOpen(false)}>{copy.navCta} <ArrowRight size={15} /></a>
         </nav>
@@ -404,7 +406,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
         <div className="footer-main">
           <div><Link href={homeHref} className="brand"><span className="brand-mark"><Play size={15} fill="currentColor" /></span><span>totube</span></Link><p>{copy.footerText}</p></div>
           <div><strong>{copy.footerPlatforms}</strong>{platformIds.map((platform) => <Link href={platformPath(locale, platform)} key={platform}>{platformNames[platform]}</Link>)}</div>
-          <div><strong>{copy.footerFormats}</strong><Link href={qualityPagePath(locale, "youtube-mp3-320")}>MP3 320 kbps</Link><Link href={qualityPagePath(locale, "youtube-mp4-1080")}>MP4 1080p</Link>{formatDefinitions.filter((item) => !["mp3", "mp4"].includes(item.id)).map((item) => <span key={item.id}>{item.label}</span>)}</div>
+          <div><strong>{copy.footerFormats}</strong><Link href={qualityPagePath(locale, "youtube-mp3-320")}>MP3 320 kbps</Link><Link href={qualityPagePath(locale, "youtube-mp4-1080")}>MP4 1080p</Link><Link href={blogIndexPath(locale)}>{blogUi[locale].nav}</Link>{formatDefinitions.filter((item) => !["mp3", "mp4"].includes(item.id)).map((item) => <span key={item.id}>{item.label}</span>)}</div>
           <div><strong>{copy.footerLanguages}</strong>{locales.map((code) => <Link href={`/${code}`} hrefLang={code} key={code}>{homeCopy[code].nativeName}</Link>)}</div>
         </div>
         <div className="footer-bottom"><span>© 2026 toTube</span><span>{copy.responsible}</span></div>

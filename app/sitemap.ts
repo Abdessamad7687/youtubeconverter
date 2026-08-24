@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { blogIndexLanguageAlternates, blogIndexPath, blogPostIds, blogPostLanguageAlternates, blogPostPath, blogPosts } from "./blog-content";
 import { languageAlternates, locales, platformIds, platformPath, qualityLanguageAlternates, qualityPageIds, qualityPagePath } from "./i18n";
 
 const siteUrl = "https://totube.online";
@@ -22,11 +23,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
     alternates: { languages: qualityLanguageAlternates(page) },
   })));
+  const localizedBlogIndexes: MetadataRoute.Sitemap = locales.map((locale) => ({
+    url: `${siteUrl}${blogIndexPath(locale)}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.75,
+    alternates: { languages: blogIndexLanguageAlternates() },
+  }));
+  const localizedBlogPosts: MetadataRoute.Sitemap = locales.flatMap((locale) => blogPostIds.map((id) => ({
+    url: `${siteUrl}${blogPostPath(locale, id)}`,
+    lastModified: new Date(`${blogPosts[locale][id].updated}T00:00:00Z`),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+    alternates: { languages: blogPostLanguageAlternates(id) },
+  })));
 
   return [
     ...localizedHomes,
     ...localizedPlatforms,
     ...localizedQualityPages,
+    ...localizedBlogIndexes,
+    ...localizedBlogPosts,
     { url: `${siteUrl}/youtube-mp3`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/youtube-mp4`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/convertisseur-mp3`, changeFrequency: "monthly", priority: 0.7 },

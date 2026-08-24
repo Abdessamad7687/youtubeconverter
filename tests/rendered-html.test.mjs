@@ -110,12 +110,62 @@ test("publishes all localized topic pages in the sitemap", async () => {
   const response = await request("/sitemap.xml");
   assert.equal(response.status, 200);
   const xml = await response.text();
-  assert.equal((xml.match(/<url>/g) || []).length, 66);
+  assert.equal((xml.match(/<url>/g) || []).length, 84);
   assert.match(xml, /https:\/\/totube\.online\/en\/youtube-to-mp3-320kbps/);
   assert.match(xml, /https:\/\/totube\.online\/fr\/youtube-mp4-1080p/);
   assert.match(xml, /https:\/\/totube\.online\/fr\/telecharger-video-rumble/);
   assert.match(xml, /https:\/\/totube\.online\/en\/download-threads-video/);
-  assert.doesNotMatch(xml, /<lastmod>/, "lastmod must be omitted unless it reflects a real content update");
+  assert.match(xml, /https:\/\/totube\.online\/fr\/blog\/mp4-mp3-quel-format-choisir/);
+  assert.match(xml, /https:\/\/totube\.online\/ar\/blog\/tanzil-video-online-bi-aman/);
+  assert.match(xml, /<lastmod>2026-08-24T00:00:00\.000Z<\/lastmod>/, "blog lastmod reflects the real editorial update date");
+});
+
+const localizedBlogPages = [
+  ["/fr/blog/mp4-mp3-quel-format-choisir", "fr", "MP4, MP3, M4A, WAV, FLAC ou OPUS"],
+  ["/fr/blog/telecharger-video-en-ligne-guide-securite", "fr", "Télécharger une vidéo en ligne"],
+  ["/en/blog/mp4-mp3-best-video-audio-format", "en", "MP4, MP3, M4A, WAV, FLAC or Opus"],
+  ["/en/blog/download-video-online-safely", "en", "How to download video online safely"],
+  ["/ar/blog/dalil-ikhtiyar-sighat-video-audio", "ar", "MP4 أم MP3"],
+  ["/ar/blog/tanzil-video-online-bi-aman", "ar", "كيفية تنزيل فيديو"],
+  ["/es/blog/mp4-mp3-que-formato-elegir", "es", "MP4, MP3, M4A"],
+  ["/es/blog/descargar-video-online-seguridad", "es", "Cómo descargar vídeo online"],
+  ["/pt/blog/mp4-mp3-qual-formato-escolher", "pt", "MP4, MP3, M4A"],
+  ["/pt/blog/baixar-video-online-com-seguranca", "pt", "Como baixar vídeo online"],
+  ["/de/blog/mp4-mp3-welches-format-waehlen", "de", "MP4, MP3, M4A"],
+  ["/de/blog/video-online-sicher-herunterladen", "de", "Videos online sicher herunterladen"],
+];
+
+for (const [pathname, lang, heading] of localizedBlogPages) {
+  test(`renders rich localized blog article ${pathname}`, async () => {
+    const response = await render(pathname);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, new RegExp(`<html lang="${lang}"`));
+    assert.ok(html.includes(`<h1>${heading}`));
+    assert.match(html, new RegExp(`rel="canonical" href="https://totube\\.online${pathname}`));
+    assert.match(html, /hreflang="x-default"/i);
+    assert.match(html, /property="og:type" content="article"/i);
+    assert.doesNotMatch(html, /(?:property="og:image"|name="twitter:image")/i, "blog posts without a primary image must not inherit the generic site image");
+    assert.match(html, /"@type":"Article"/i);
+    assert.match(html, /"@type":"BreadcrumbList"/i);
+    assert.match(html, /"@type":"FAQPage"/i);
+    assert.match(html, /toTube Editorial/i);
+    assert.match(html, /class="blog-toc"/i);
+    assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
+    assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
+    assert.ok(html.length > 14000, `expected substantial server-rendered article content for ${pathname}`);
+  });
+}
+
+test("renders localized blog index with both editorial guides", async () => {
+  const response = await render("/fr/blog");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<h1>Guides vidéo et audio<\/h1>/i);
+  assert.match(html, /mp4-mp3-quel-format-choisir/i);
+  assert.match(html, /telecharger-video-en-ligne-guide-securite/i);
+  assert.match(html, /"@type":"CollectionPage"/i);
+  assert.match(html, /rel="canonical" href="https:\/\/totube\.online\/fr\/blog"/i);
 });
 
 const landingPages = [
