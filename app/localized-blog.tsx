@@ -2,7 +2,7 @@ import { ArrowRight, CalendarDays, Check, Clock3, Play } from "lucide-react";
 import Link from "next/link";
 import AdBanner from "./ad-banner";
 import { AD_KEYS } from "./ad-config";
-import { BlogPost, BlogPostId, blogIndexPath, blogPostIds, blogPostPath, blogPosts, blogUi } from "./blog-content";
+import { BlogPost, BlogPostId, blogIndexGuides, blogIndexPath, blogPostIds, blogPostPath, blogPosts, blogUi } from "./blog-content";
 import { homeCopy, Locale, platformPath, qualityPagePath } from "./i18n";
 import { ToolFooter, ToolNavigation } from "./tool-navigation";
 
@@ -28,6 +28,7 @@ function ArticleCard({ locale, post, featured = false }: { locale: Locale; post:
 
 export function LocalizedBlogIndex({ locale }: { locale: Locale }) {
   const ui = blogUi[locale];
+  const guide = blogIndexGuides[locale];
   const copy = homeCopy[locale];
   const posts = blogPostIds.map((id) => blogPosts[locale][id]);
   const breadcrumbSchema = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: ui.home, item: `https://totube.online/${locale}` }, { "@type": "ListItem", position: 2, name: ui.nav, item: `https://totube.online${blogIndexPath(locale)}` }] };
@@ -43,6 +44,10 @@ export function LocalizedBlogIndex({ locale }: { locale: Locale }) {
     </section>
     <div className="seo-ad-band"><AdBanner adKey={AD_KEYS.leaderboard} width={728} height={90} label={copy.ad} /></div>
     <section className="blog-index-content"><div className="blog-index-heading"><span className="section-kicker">{ui.latest}</span><p>{posts.length} {ui.nav.toLocaleLowerCase(dateLocales[locale])}</p></div><div className="blog-card-grid">{posts.map((post, index) => <ArticleCard key={post.id} locale={locale} post={post} featured={index === 0} />)}</div></section>
+    <article className="blog-index-guide">
+      <header><span className="section-kicker">toTube Editorial</span><h2>{guide.title}</h2><p>{guide.intro}</p></header>
+      <div>{guide.sections.map((section, index) => <section key={section.title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{section.title}</h3>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}</div>
+    </article>
     <section className="blog-topic-links"><div><span className="section-kicker">toTube</span><h2>{ui.converter}</h2><p>{copy.metaDescription}</p></div><div><Link href={platformPath(locale, "youtube")}>YouTube <ArrowRight size={15} /></Link><Link href={qualityPagePath(locale, "youtube-mp3-320")}>MP3 320 kbps <ArrowRight size={15} /></Link><Link href={qualityPagePath(locale, "youtube-mp4-1080")}>MP4 1080p <ArrowRight size={15} /></Link></div></section>
     <ToolFooter locale={locale} text={ui.footer} />
   </main>;

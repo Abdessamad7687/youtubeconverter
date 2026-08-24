@@ -103,8 +103,20 @@ for (const [pathname, lang, heading] of localizedQualityPages) {
     assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
     assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
     assert.doesNotMatch(html, /highperformanceformat\.com\/undefined/i);
+    assert.ok((html.match(/<section>/g) || []).length >= 6, `expected an in-depth quality guide for ${pathname}`);
   });
 }
+
+test("explains quality selection, file size and playback troubleshooting", async () => {
+  const audio = await (await render("/en/youtube-to-mp3-320kbps")).text();
+  assert.match(audio, /Which bitrate works for music, speech or a car stereo\?/i);
+  assert.match(audio, /Estimate file size from duration/i);
+  assert.match(audio, /What if the MP3 does not play\?/i);
+
+  const video = await (await render("/fr/youtube-mp4-1080p")).text();
+  assert.match(video, /Quelle résolution pour un téléphone, un ordinateur ou une TV\s*\?/i);
+  assert.match(video, /Pourquoi le son et l’image sont parfois séparés/i);
+});
 
 test("publishes all localized topic pages in the sitemap", async () => {
   const response = await request("/sitemap.xml");
@@ -166,7 +178,29 @@ test("renders localized blog index with both editorial guides", async () => {
   assert.match(html, /telecharger-video-en-ligne-guide-securite/i);
   assert.match(html, /"@type":"CollectionPage"/i);
   assert.match(html, /rel="canonical" href="https:\/\/totube\.online\/fr\/blog"/i);
+  assert.match(html, /Comprendre avant de convertir/i);
+  assert.match(html, /Télécharger de façon responsable et diagnostiquer une erreur/i);
+  assert.ok(html.length > 16000, "blog index should contain substantial localized editorial guidance");
 });
+
+const localizedBlogIndexes = [
+  ["/en/blog", "Understand the file before you convert"],
+  ["/ar/blog", "افهم الملف قبل بدء التحويل"],
+  ["/es/blog", "Comprende el archivo antes de convertir"],
+  ["/pt/blog", "Entenda o arquivo antes de converter"],
+  ["/de/blog", "Die Datei vor der Konvertierung verstehen"],
+];
+
+for (const [pathname, editorialHeading] of localizedBlogIndexes) {
+  test(`renders substantial localized blog index ${pathname}`, async () => {
+    const response = await render(pathname);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.ok(html.includes(editorialHeading));
+    assert.match(html, /class="blog-index-guide"/i);
+    assert.ok(html.length > 15000, `expected substantial localized blog index content for ${pathname}`);
+  });
+}
 
 const landingPages = [
   ["/youtube-mp3", "YouTube MP3 gratuit", "<h1>YouTube MP3"],
@@ -224,8 +258,18 @@ for (const [pathname, lang, heading] of localizedPlatformPages) {
     assert.match(html, /5321f0adf5a727cf9500e1e0bce95ca9/i);
     assert.match(html, /4ed5c4bd0900ef9380332764b589781a/i);
     assert.doesNotMatch(html, /highperformanceformat\.com\/undefined/i);
+    assert.ok((html.match(/<section>/g) || []).length >= 6, `expected a detailed platform guide for ${pathname}`);
   });
 }
+
+test("explains platform format choice, source quality and troubleshooting", async () => {
+  const response = await render("/en/download-tiktok-video");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Which format should you choose\?/i);
+  assert.match(html, /Resolution, bitrate and file compatibility/i);
+  assert.match(html, /What should you check when a link fails\?/i);
+});
 
 test("targets the supplied Rumble keyword cluster with useful page content", async () => {
   const response = await render("/en/download-rumble-video");

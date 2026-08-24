@@ -59,6 +59,64 @@ const seoUi: Record<Locale, LocaleSeo> = {
   },
 };
 
+const platformDepth: Record<Locale, {
+  formatTitle: string;
+  formatText: (platform: string) => string;
+  qualityTitle: string;
+  qualityText: (platform: string) => string;
+  troubleshootingTitle: string;
+  troubleshootingText: (platform: string) => string;
+}> = {
+  fr: {
+    formatTitle: "Quel format choisir pour ce téléchargement ?",
+    formatText: (p) => `Choisissez MP4 pour conserver l’image de la publication ${p}. Pour une écoute hors ligne, MP3 offre la compatibilité la plus large, M4A et Opus produisent souvent des fichiers efficaces, tandis que WAV ou FLAC conviennent davantage au montage et à l’archivage. Convertir vers un format sans perte ne restaure toutefois pas les détails déjà absents du flux public. Le meilleur choix dépend donc de l’appareil, de l’espace disponible et de l’usage prévu.`,
+    qualityTitle: "Résolution, débit et compatibilité du fichier",
+    qualityText: (p) => `toTube sélectionne la meilleure version publique ${p} sous la limite demandée, jusqu’à 1080p. Une source disponible seulement en 720p reste en 720p : l’agrandir ne créerait pas de vrais détails. Pour l’audio, 128 ou 192 kbps suffit généralement à la voix, tandis que 256 ou 320 kbps limite les pertes supplémentaires pour la musique. Les sorties vidéo sont préparées en MP4 H.264/AAC lorsque la compatibilité l’exige, puis contrôlées avant le téléchargement.`,
+    troubleshootingTitle: "Que vérifier si le lien ne fonctionne pas ?",
+    troubleshootingText: (p) => `Ouvrez d’abord la publication ${p} originale dans une fenêtre privée. Elle doit être encore disponible, contenir une vidéo et fonctionner sans connexion. Évitez les liens de profil, de recherche ou les lecteurs intégrés; utilisez le bouton Partager de la publication. Un direct en cours, une story expirée, une restriction régionale ou un changement temporaire de la plateforme peut empêcher l’analyse. Dans ce cas, recopiez l’URL finale, attendez la publication du direct et réessayez sans modifier le lien.`,
+  },
+  en: {
+    formatTitle: "Which format should you choose?",
+    formatText: (p) => `Choose MP4 to keep the picture from the ${p} post. For offline listening, MP3 provides the broadest compatibility, M4A and Opus are often more efficient, and WAV or FLAC are better suited to editing and archiving. Converting to a lossless format cannot restore detail already missing from the public stream. The practical choice therefore depends on the target device, available storage and whether you still need the video track.`,
+    qualityTitle: "Resolution, bitrate and file compatibility",
+    qualityText: (p) => `toTube selects the best public ${p} stream below the requested ceiling, up to 1080p. A source available only at 720p remains 720p because upscaling would not create real detail. For audio, 128 or 192 kbps is normally adequate for speech, while 256 or 320 kbps reduces additional loss for music. Video outputs are prepared as H.264/AAC MP4 when compatibility requires it and their streams are checked before download.`,
+    troubleshootingTitle: "What should you check when a link fails?",
+    troubleshootingText: (p) => `Open the original ${p} post in a private browser window first. It must still exist, contain a video and play without signing in. Avoid profile pages, search results and embedded players; use the post’s Share control. An active live stream, expired story, regional restriction or temporary platform change can stop inspection. Copy the final post URL again, wait for a live stream to be published when necessary, and retry without adding text around the link.`,
+  },
+  ar: {
+    formatTitle: "ما الصيغة المناسبة للتنزيل؟",
+    formatText: (p) => `اختر MP4 للاحتفاظ بصورة منشور ${p}. للاستماع بدون إنترنت توفر MP3 أوسع توافق، بينما تكون M4A وOpus أكثر كفاءة غالباً، وتناسب WAV وFLAC التحرير أو الأرشفة. التحويل إلى صيغة بدون فقد لا يعيد التفاصيل غير الموجودة أصلاً في البث العام. لذلك يعتمد الاختيار العملي على الجهاز ومساحة التخزين والحاجة إلى مسار الفيديو.`,
+    qualityTitle: "الدقة ومعدل البيانات وتوافق الملف",
+    qualityText: (p) => `يختار toTube أفضل بث عام متاح من ${p} تحت الحد المطلوب وحتى 1080p. إذا كانت أفضل نسخة 720p فستبقى كذلك لأن التكبير لا يصنع تفاصيل حقيقية. يكفي 128 أو 192 kbps للكلام عادة، بينما يقلل 256 أو 320 kbps الخسارة الإضافية في الموسيقى. تُجهز ملفات الفيديو بصيغة MP4 مع H.264 وAAC عند الحاجة ثم تُفحص مساراتها قبل التنزيل.`,
+    troubleshootingTitle: "ماذا تفحص إذا لم يعمل الرابط؟",
+    troubleshootingText: (p) => `افتح منشور ${p} الأصلي في نافذة خاصة وتأكد من أنه ما زال موجوداً ويحتوي على فيديو ويعمل بدون تسجيل الدخول. تجنب روابط الملف الشخصي ونتائج البحث والمشغلات المضمنة، واستخدم رابط المشاركة من المنشور. قد يمنع بث مباشر جارٍ أو قصة منتهية أو قيد إقليمي أو تغيير مؤقت في المنصة عملية الفحص. انسخ الرابط النهائي مجدداً وانتظر نشر البث ثم أعد المحاولة.`,
+  },
+  es: {
+    formatTitle: "¿Qué formato conviene elegir?",
+    formatText: (p) => `Elige MP4 para conservar la imagen de la publicación de ${p}. Para escuchar sin conexión, MP3 ofrece la compatibilidad más amplia, M4A y Opus suelen ser eficientes, y WAV o FLAC resultan más útiles para edición y archivo. Convertir a un formato sin pérdida no recupera detalles ausentes del flujo público. La decisión práctica depende del dispositivo, el espacio disponible y de si necesitas mantener el vídeo.`,
+    qualityTitle: "Resolución, bitrate y compatibilidad",
+    qualityText: (p) => `toTube selecciona el mejor flujo público de ${p} por debajo del límite solicitado, hasta 1080p. Una fuente disponible solo en 720p permanece en 720p porque ampliarla no crea detalle real. Para voz suelen bastar 128 o 192 kbps; 256 o 320 kbps reducen pérdidas adicionales en música. Cuando hace falta compatibilidad, el vídeo se prepara como MP4 H.264/AAC y se comprueban sus flujos antes de descargarlo.`,
+    troubleshootingTitle: "¿Qué comprobar si el enlace falla?",
+    troubleshootingText: (p) => `Abre primero la publicación original de ${p} en una ventana privada. Debe seguir disponible, contener vídeo y reproducirse sin iniciar sesión. Evita perfiles, búsquedas y reproductores incrustados; usa la opción Compartir del post. Un directo activo, una historia caducada, una restricción regional o un cambio temporal de la plataforma pueden impedir el análisis. Copia de nuevo la URL final, espera a que termine el directo si procede y vuelve a intentarlo.`,
+  },
+  pt: {
+    formatTitle: "Qual formato escolher para o download?",
+    formatText: (p) => `Escolha MP4 para manter a imagem do post do ${p}. Para ouvir offline, MP3 oferece a maior compatibilidade, M4A e Opus costumam ser eficientes, e WAV ou FLAC atendem melhor a edição e arquivo. Converter para um formato sem perdas não recupera detalhes que já faltam no fluxo público. A opção prática depende do aparelho final, do espaço disponível e da necessidade de conservar o vídeo.`,
+    qualityTitle: "Resolução, bitrate e compatibilidade",
+    qualityText: (p) => `O toTube seleciona o melhor fluxo público do ${p} abaixo do limite solicitado, até 1080p. Uma fonte disponível apenas em 720p continua em 720p, pois ampliar não cria detalhes reais. Para voz, 128 ou 192 kbps geralmente basta; 256 ou 320 kbps reduz perdas adicionais em música. Quando a compatibilidade exige, o vídeo é preparado em MP4 H.264/AAC e os fluxos são verificados antes do download.`,
+    troubleshootingTitle: "O que verificar quando o link falha?",
+    troubleshootingText: (p) => `Abra primeiro o post original do ${p} em uma janela anônima. Ele precisa continuar disponível, conter vídeo e tocar sem login. Evite perfis, resultados de busca e players incorporados; use o botão Compartilhar do post. Uma live ativa, um story expirado, uma restrição regional ou uma mudança temporária da plataforma podem impedir a análise. Copie novamente a URL final, aguarde a publicação da live quando necessário e tente outra vez.`,
+  },
+  de: {
+    formatTitle: "Welches Format passt zum Download?",
+    formatText: (p) => `Wähle MP4, um das Bild des ${p}-Beitrags zu behalten. Für Offline-Audio ist MP3 am breitesten kompatibel, M4A und Opus sind oft effizienter, während WAV oder FLAC eher zu Bearbeitung und Archivierung passen. Ein verlustfreies Zielformat stellt keine Details wieder her, die im öffentlichen Stream bereits fehlen. Entscheidend sind daher Zielgerät, Speicherplatz und die Frage, ob das Bild benötigt wird.`,
+    qualityTitle: "Auflösung, Bitrate und Dateikompatibilität",
+    qualityText: (p) => `toTube wählt den besten öffentlichen ${p}-Stream unterhalb der gewünschten Grenze bis 1080p. Ist die Quelle nur in 720p verfügbar, bleibt sie in 720p, denn Hochskalieren erzeugt keine echten Details. Für Sprache genügen meist 128 oder 192 kbps; 256 oder 320 kbps verringern zusätzliche Verluste bei Musik. Wenn nötig, wird Video als H.264/AAC-MP4 vorbereitet und vor dem Download auf die tatsächlichen Streams geprüft.`,
+    troubleshootingTitle: "Was tun, wenn ein Link nicht funktioniert?",
+    troubleshootingText: (p) => `Öffne zuerst den ursprünglichen ${p}-Beitrag in einem privaten Browserfenster. Er muss noch vorhanden sein, ein Video enthalten und ohne Anmeldung laufen. Vermeide Profile, Suchergebnisse und eingebettete Player; nutze die Teilen-Funktion des Beitrags. Ein laufender Livestream, eine abgelaufene Story, eine regionale Einschränkung oder eine vorübergehende Plattformänderung kann die Analyse verhindern. Kopiere die endgültige URL erneut und versuche es später noch einmal.`,
+  },
+};
+
 const platformSpecific: Record<Locale, Record<PlatformId, { title: string; text: string }>> = {
   fr: {
     youtube: { title: "YouTube, Shorts et musique", text: "Les vidéos classiques et Shorts publics sont pris en charge. Une URL de playlist traite une seule vidéo à la fois afin de limiter la charge et de garder un téléchargement clair." },
@@ -131,6 +189,7 @@ export function platformMetadataText(locale: Locale, platform: PlatformId) {
 
 export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; platform: PlatformId }) {
   const ui = seoUi[locale];
+  const depth = platformDepth[locale];
   const copy = homeCopy[locale];
   const name = platformNames[platform];
   const canonical = `https://totube.online${platformPath(locale, platform)}`;
@@ -186,7 +245,10 @@ export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; pl
         <div className="seo-copy">
           <section><h2>{ui.howTitle(name)}</h2><p>{ui.steps(name)}</p></section>
           <section><h2>{platformSpecific[locale][platform].title}</h2><p>{platformSpecific[locale][platform].text}</p></section>
+          <section><h2>{depth.formatTitle}</h2><p>{depth.formatText(name)}</p></section>
+          <section><h2>{depth.qualityTitle}</h2><p>{depth.qualityText(name)}</p></section>
           <section><h2>{ui.limitsTitle}</h2><p>{ui.limits(name)}</p></section>
+          <section><h2>{depth.troubleshootingTitle}</h2><p>{depth.troubleshootingText(name)}</p></section>
           <aside className="seo-callout"><span><FileAudio /></span><div><strong>{copy.chooseFormat}</strong><p>MP3 · MP4 · M4A · WAV · AAC · FLAC · OPUS</p></div><Link href="#converter">{ui.convert} <ArrowRight size={15} /></Link></aside>
         </div>
       </article>

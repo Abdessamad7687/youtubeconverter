@@ -49,6 +49,81 @@ const qualityContent: Record<Locale, Record<QualityPageId, QualityContent>> = {
   },
 };
 
+const qualitySupplements: Record<Locale, Record<"audio" | "video", { title: string; text: string }[]>> = {
+  fr: {
+    audio: [
+      { title: "Quel débit pour la musique, la voix ou la voiture ?", text: "Pour une conférence ou un podcast, 128 à 192 kbps offre généralement une écoute claire avec un fichier compact. La musique bénéficie davantage de 256 ou 320 kbps lorsque la source est de bonne qualité. Dans une voiture, sur une clé USB ou un ancien lecteur, MP3 reste le choix le plus sûr. Comparez surtout le résultat sur votre appareil : un débit élevé consomme plus d’espace sans garantir une différence audible dans tous les environnements." },
+      { title: "Taille du fichier et durée", text: "À durée égale, un MP3 320 kbps est environ deux fois et demie plus volumineux qu’un fichier 128 kbps. Une heure d’audio représente approximativement 58 Mo à 128 kbps, 86 Mo à 192 kbps et 144 Mo à 320 kbps, hors métadonnées. Ces valeurs sont des estimations utiles pour choisir avant un long enregistrement; la taille exacte dépend de l’encodage et du média source." },
+      { title: "Que faire si le MP3 ne se lit pas ?", text: "Téléchargez le fichier jusqu’au bout et vérifiez que son extension est bien .mp3. Essayez ensuite un lecteur récent ou le navigateur avant de relancer la conversion. Un fichier de zéro octet, une durée incohérente ou une page HTML enregistrée à la place du média indique un téléchargement interrompu, pas un problème de débit. toTube contrôle le flux audio final, mais le transfert local peut encore être bloqué par le navigateur ou l’espace disponible." },
+    ],
+    video: [
+      { title: "Quelle résolution pour un téléphone, un ordinateur ou une TV ?", text: "360p économise les données sur une petite connexion, 480p reste lisible sur un téléphone, 720p équilibre netteté et taille, et 1080p convient mieux aux écrans plus grands. La distance de visionnage et la qualité de la source comptent autant que le nombre de pixels. Pour une courte vidéo mobile, 720p est souvent suffisant; pour du texte fin ou une démonstration sur ordinateur, 1080p peut préserver davantage de détails." },
+      { title: "Pourquoi le son et l’image sont parfois séparés", text: "Les plateformes diffusent souvent les meilleures qualités vidéo et audio dans des flux distincts. Le serveur doit les télécharger, les synchroniser puis les réunir dans un seul MP4. Une fusion correcte conserve la qualité sans réencoder inutilement. Si les codecs ne sont pas compatibles avec les appareils courants, toTube prépare une sortie H.264/AAC afin d’éviter une vidéo muette, un écran noir ou un fichier refusé par QuickTime." },
+      { title: "Diagnostiquer un MP4 flou ou impossible à lire", text: "Vérifiez d’abord la résolution réellement proposée sur la page source. Un choix 1080p agit comme une limite maximale, pas comme une promesse d’agrandissement. Si le fichier ne se lit pas, attendez la fin du téléchargement, contrôlez sa taille et essayez un lecteur récent. Une connexion interrompue peut produire un fichier partiel, tandis qu’une source verticale ou très compressée peut sembler floue même avec une hauteur annoncée élevée." },
+    ],
+  },
+  en: {
+    audio: [
+      { title: "Which bitrate works for music, speech or a car stereo?", text: "For lectures and podcasts, 128 to 192 kbps normally gives clear speech in a compact file. Music benefits more from 256 or 320 kbps when the source is good enough. MP3 remains the safest option for car stereos, USB drives and older players. Compare the result on the device you actually use: a higher bitrate takes more space and is not automatically audible in every listening environment." },
+      { title: "Estimate file size from duration", text: "For the same duration, a 320 kbps MP3 is roughly two and a half times the size of a 128 kbps file. One hour of audio is approximately 58 MB at 128 kbps, 86 MB at 192 kbps and 144 MB at 320 kbps, excluding metadata. These are planning estimates rather than guarantees because exact size depends on the encoder and source." },
+      { title: "What if the MP3 does not play?", text: "Let the download finish and confirm that the file ends in .mp3. Try a current media player or the browser before converting again. A zero-byte file, implausible duration or saved HTML page points to an interrupted transfer rather than a bitrate problem. toTube checks the final audio stream, but the local transfer can still be stopped by browser settings or insufficient device storage." },
+    ],
+    video: [
+      { title: "Which resolution fits a phone, computer or TV?", text: "360p saves data on slow connections, 480p remains usable on a phone, 720p balances sharpness and size, and 1080p is better for larger screens. Viewing distance and source quality matter as much as pixel count. A short mobile clip is often fine at 720p, while small text and desktop demonstrations can benefit from genuine 1080p detail." },
+      { title: "Why video and audio may arrive as separate streams", text: "Platforms often deliver their best picture and sound in separate streams. The server downloads them, keeps them synchronized and merges them into one MP4. A clean merge preserves quality without unnecessary re-encoding. When the supplied codecs are not broadly compatible, toTube prepares H.264/AAC output to prevent silent video, a black screen or a file rejected by QuickTime." },
+      { title: "Troubleshoot a blurry or unplayable MP4", text: "Check the resolution genuinely offered by the source page first. Selecting 1080p sets a maximum, not a promise to upscale. If playback fails, wait for the full download, check the file size and try a current player. An interrupted connection can leave a partial file, while a vertical or heavily compressed source may still look soft even when its reported height is high." },
+    ],
+  },
+  ar: {
+    audio: [
+      { title: "أي معدل يناسب الموسيقى أو الكلام أو السيارة؟", text: "يكفي 128 إلى 192 kbps عادة للمحاضرات والبودكاست مع حجم صغير. تستفيد الموسيقى أكثر من 256 أو 320 kbps عندما تكون جودة المصدر جيدة. تبقى MP3 الخيار الأكثر توافقاً للسيارة وذاكرة USB والأجهزة القديمة. اختبر الملف على جهازك الفعلي، فالمعدل الأعلى يحتاج مساحة أكبر ولا يعني دائماً فرقاً مسموعاً." },
+      { title: "تقدير حجم الملف من المدة", text: "يكون ملف 320 kbps للمدة نفسها أكبر بنحو مرتين ونصف من 128 kbps. تمثل ساعة صوت تقريباً 58 ميغابايت عند 128 و86 ميغابايت عند 192 و144 ميغابايت عند 320، من دون البيانات الوصفية. هذه أرقام تقريبية للتخطيط لأن الحجم الدقيق يعتمد على الترميز والمصدر." },
+      { title: "ماذا تفعل إذا لم يعمل MP3؟", text: "انتظر اكتمال التنزيل وتأكد من امتداد .mp3، ثم جرب مشغلاً حديثاً أو المتصفح. الملف الفارغ أو المدة غير المنطقية أو حفظ صفحة HTML يدل على نقل منقطع وليس مشكلة في معدل الصوت. يفحص toTube مسار الصوت النهائي، لكن إعدادات المتصفح أو نقص مساحة الجهاز قد يوقفان التنزيل المحلي." },
+    ],
+    video: [
+      { title: "أي دقة تناسب الهاتف أو الكمبيوتر أو التلفاز؟", text: "توفر 360p البيانات، وتناسب 480p شاشة الهاتف، وتوازن 720p بين الوضوح والحجم، بينما تلائم 1080p الشاشات الأكبر. تؤثر مسافة المشاهدة وجودة المصدر بقدر عدد البكسلات. غالباً تكفي 720p لمقطع هاتف قصير، أما النص الصغير وشرح سطح المكتب فيستفيدان من 1080p حقيقية." },
+      { title: "لماذا يصل الصوت والفيديو في مسارين؟", text: "ترسل المنصات أفضل صورة وصوت في مسارين منفصلين غالباً. ينزلهما الخادم ويحافظ على تزامنهما ثم يدمجهما في MP4 واحد. يحافظ الدمج على الجودة من دون إعادة ترميز غير ضرورية. وعندما لا تكون الترميزات متوافقة على نطاق واسع، يجهز toTube ملف H.264/AAC لتجنب شاشة سوداء أو فيديو بلا صوت." },
+      { title: "حل مشكلة MP4 الضبابي أو غير القابل للتشغيل", text: "تحقق أولاً من الدقة الحقيقية في صفحة المصدر. اختيار 1080p يحدد سقفاً ولا يعني تكبير الفيديو. عند فشل التشغيل انتظر اكتمال التنزيل وافحص حجم الملف وجرب مشغلاً حديثاً. قد يترك انقطاع الاتصال ملفاً ناقصاً، كما قد يبدو المصدر العمودي أو المضغوط ضبابياً رغم ارتفاع عدد البكسلات المعلن." },
+    ],
+  },
+  es: {
+    audio: [
+      { title: "¿Qué bitrate usar para música, voz o el coche?", text: "Para clases y podcasts, 128 a 192 kbps suele ofrecer voz clara en un archivo compacto. La música aprovecha mejor 256 o 320 kbps cuando la fuente es buena. MP3 sigue siendo la opción más compatible para coches, memorias USB y reproductores antiguos. Compara el resultado en tu dispositivo: un bitrate mayor ocupa más y no siempre produce una diferencia audible." },
+      { title: "Calcula el tamaño según la duración", text: "Con la misma duración, un MP3 de 320 kbps ocupa unas dos veces y media más que uno de 128 kbps. Una hora equivale aproximadamente a 58 MB en 128, 86 MB en 192 y 144 MB en 320, sin contar metadatos. Son estimaciones para planificar; el tamaño exacto depende del codificador y la fuente." },
+      { title: "¿Qué hacer si el MP3 no se reproduce?", text: "Espera a que termine la descarga y confirma la extensión .mp3. Prueba un reproductor reciente o el navegador antes de convertir otra vez. Un archivo vacío, una duración incoherente o una página HTML guardada indican una transferencia interrumpida. toTube comprueba el flujo de audio, pero el navegador o la falta de espacio todavía pueden detener la descarga local." },
+    ],
+    video: [
+      { title: "¿Qué resolución sirve para móvil, ordenador o TV?", text: "360p ahorra datos, 480p funciona en un móvil, 720p equilibra nitidez y tamaño y 1080p se adapta mejor a pantallas grandes. La distancia y la fuente importan tanto como los píxeles. Un clip móvil suele verse bien en 720p; el texto pequeño o una demostración de escritorio pueden beneficiarse de 1080p real." },
+      { title: "Por qué el audio y el vídeo pueden llegar separados", text: "Las plataformas suelen entregar la mejor imagen y el mejor sonido en flujos distintos. El servidor los descarga, sincroniza y combina en un solo MP4. Una unión correcta conserva calidad sin recodificar de forma innecesaria. Si los códecs no son compatibles, toTube prepara H.264/AAC para evitar vídeo sin sonido, pantalla negra o rechazo de QuickTime." },
+      { title: "Soluciona un MP4 borroso o incompatible", text: "Comprueba primero la resolución ofrecida por la fuente. Seleccionar 1080p fija un máximo, no promete ampliar. Si no se reproduce, espera la descarga completa, revisa el tamaño y prueba un reproductor actual. Una conexión interrumpida deja archivos parciales y una fuente vertical o muy comprimida puede verse suave aunque declare muchos píxeles." },
+    ],
+  },
+  pt: {
+    audio: [
+      { title: "Qual bitrate usar para música, voz ou som do carro?", text: "Para aulas e podcasts, 128 a 192 kbps normalmente oferece voz clara com arquivo compacto. Música aproveita melhor 256 ou 320 kbps quando a fonte é boa. MP3 continua a opção mais compatível para carros, USB e players antigos. Compare no aparelho real: bitrate maior ocupa mais espaço e nem sempre gera diferença audível." },
+      { title: "Estime o tamanho pela duração", text: "Na mesma duração, um MP3 de 320 kbps ocupa cerca de duas vezes e meia o tamanho de 128 kbps. Uma hora representa aproximadamente 58 MB em 128, 86 MB em 192 e 144 MB em 320, sem metadados. São estimativas para planejamento; o tamanho exato depende do codificador e da fonte." },
+      { title: "O que fazer se o MP3 não tocar?", text: "Espere o download terminar e confirme a extensão .mp3. Teste um player atual ou o navegador antes de converter novamente. Arquivo vazio, duração incoerente ou página HTML salva indicam transferência interrompida. O toTube verifica o fluxo de áudio, mas o navegador ou a falta de espaço ainda podem interromper o download local." },
+    ],
+    video: [
+      { title: "Qual resolução usar no celular, computador ou TV?", text: "360p economiza dados, 480p funciona no celular, 720p equilibra nitidez e tamanho e 1080p atende melhor a telas grandes. Distância e qualidade da fonte importam tanto quanto pixels. Um clipe móvel costuma ficar bom em 720p; texto pequeno e demonstrações de desktop podem aproveitar 1080p verdadeiro." },
+      { title: "Por que áudio e vídeo podem vir separados", text: "As plataformas frequentemente entregam a melhor imagem e o melhor som em fluxos distintos. O servidor baixa, sincroniza e une ambos em um MP4. A união correta preserva qualidade sem recodificar sem necessidade. Quando os codecs não são amplamente compatíveis, o toTube prepara H.264/AAC para evitar vídeo mudo, tela preta ou rejeição pelo QuickTime." },
+      { title: "Resolva um MP4 borrado ou incompatível", text: "Confira primeiro a resolução realmente oferecida pela fonte. Selecionar 1080p define um máximo, não promete ampliar. Se não tocar, espere o download completo, verifique o tamanho e teste um player recente. Uma conexão interrompida deixa arquivo parcial, e uma fonte vertical ou muito comprimida pode continuar suave mesmo com altura elevada." },
+    ],
+  },
+  de: {
+    audio: [
+      { title: "Welche Bitrate für Musik, Sprache oder Autoradio?", text: "Für Vorträge und Podcasts liefern 128 bis 192 kbps meist klare Sprache bei kompakter Größe. Musik profitiert bei guter Quelle eher von 256 oder 320 kbps. MP3 bleibt für Autoradios, USB-Sticks und ältere Player am kompatibelsten. Vergleiche auf dem echten Zielgerät: Eine höhere Bitrate braucht mehr Platz und ist nicht in jeder Umgebung hörbar besser." },
+      { title: "Dateigröße aus der Dauer abschätzen", text: "Bei gleicher Dauer ist eine 320-kbps-MP3 ungefähr zweieinhalbmal so groß wie eine Datei mit 128 kbps. Eine Stunde entspricht grob 58 MB bei 128, 86 MB bei 192 und 144 MB bei 320 kbps, ohne Metadaten. Das sind Planungswerte; die genaue Größe hängt von Encoder und Quelle ab." },
+      { title: "Was tun, wenn die MP3 nicht läuft?", text: "Warte den vollständigen Download ab und prüfe die Endung .mp3. Teste einen aktuellen Player oder Browser, bevor du erneut konvertierst. Eine leere Datei, unplausible Dauer oder gespeicherte HTML-Seite deutet auf eine unterbrochene Übertragung. toTube prüft den Audiostream, doch Browser-Einstellungen oder fehlender Speicher können den lokalen Transfer stoppen." },
+    ],
+    video: [
+      { title: "Welche Auflösung für Handy, Computer oder TV?", text: "360p spart Daten, 480p reicht auf dem Handy, 720p balanciert Schärfe und Größe und 1080p passt besser zu großen Bildschirmen. Abstand und Quellqualität zählen ebenso wie Pixel. Für kurze mobile Clips genügt oft 720p; kleine Schrift und Desktop-Demos profitieren von echten 1080p-Details." },
+      { title: "Warum Bild und Ton getrennt geliefert werden", text: "Plattformen liefern bestes Bild und besten Ton oft als getrennte Streams. Der Server lädt beide, hält sie synchron und führt sie zu einem MP4 zusammen. Sauberes Zusammenführen bewahrt Qualität ohne unnötige Neucodierung. Sind die Codecs nicht breit kompatibel, bereitet toTube H.264/AAC vor, um stummes Video, schwarzen Bildschirm oder QuickTime-Ablehnung zu vermeiden." },
+      { title: "Unscharfes oder unspielbares MP4 prüfen", text: "Prüfe zuerst die tatsächlich angebotene Quellauflösung. 1080p setzt eine Obergrenze und verspricht kein Hochskalieren. Warte bei Wiedergabeproblemen den vollständigen Download ab, kontrolliere die Größe und teste einen aktuellen Player. Eine unterbrochene Verbindung hinterlässt Teildateien; stark komprimierte oder vertikale Quellen können trotz hoher gemeldeter Pixelzahl weich wirken." },
+    ],
+  },
+};
+
 export function localizedQualityMetadata(locale: Locale, page: QualityPageId) {
   const content = qualityContent[locale][page];
   return { title: `${content.title} — ${content.accent.replace(/\.$/, "")} | toTube`, description: content.description };
@@ -56,6 +131,7 @@ export function localizedQualityMetadata(locale: Locale, page: QualityPageId) {
 
 export function LocalizedQualityPage({ locale, page }: { locale: Locale; page: QualityPageId }) {
   const content = qualityContent[locale][page];
+  const sections = [...content.sections, ...qualitySupplements[locale][page === "youtube-mp3-320" ? "audio" : "video"]];
   const copy = homeCopy[locale];
   const canonical = `https://totube.online${qualityPagePath(locale, page)}`;
   const otherPage: QualityPageId = page === "youtube-mp3-320" ? "youtube-mp4-1080" : "youtube-mp3-320";
@@ -72,7 +148,7 @@ export function LocalizedQualityPage({ locale, page }: { locale: Locale; page: Q
     <section className="seo-hero"><nav className="breadcrumbs"><Link href={`/${locale}`}>{content.home}</Link><span>/</span><span>{content.title}</span></nav><span className="section-kicker">{content.guide}</span><h1>{content.title}<br /><em>{content.accent}</em></h1><p>{content.description}</p><Link href={`/${locale}#converter`} className="seo-primary-cta">{content.convert} <ArrowRight size={18} /></Link><div className="seo-trust"><span><Check size={15} /> {content.free}</span><span><Check size={15} /> {content.verified}</span><span><Check size={15} /> {content.selectable}</span></div></section>
     <div className="seo-ad-band"><AdBanner adKey={AD_KEYS.leaderboard} width={728} height={90} label={copy.ad} /></div>
     <section className="seo-benefits"><article><span><MainIcon /></span><h2>{content.title}</h2><p>{content.description}</p></article><article><span><Gauge /></span><h2>{content.selectable}</h2><p>{content.sections[0].text}</p></article><article><span><ShieldCheck /></span><h2>{content.verified}</h2><p>{content.sections[2].text}</p></article></section>
-    <article className="seo-article"><div className="seo-article-intro"><span className="section-kicker">{content.guide}</span><p>{content.description}</p></div><div className="seo-copy">{content.sections.map((section) => <section key={section.title}><h2>{section.title}</h2><p>{section.text}</p></section>)}<aside className="seo-callout"><span><MainIcon /></span><div><strong>{content.selectable}</strong><p>{content.verified}</p></div><Link href={`/${locale}#converter`}>{content.convert} <ArrowRight size={15} /></Link></aside></div></article>
+    <article className="seo-article"><div className="seo-article-intro"><span className="section-kicker">{content.guide}</span><p>{content.description}</p></div><div className="seo-copy">{sections.map((section) => <section key={section.title}><h2>{section.title}</h2><p>{section.text}</p></section>)}<aside className="seo-callout"><span><MainIcon /></span><div><strong>{content.selectable}</strong><p>{content.verified}</p></div><Link href={`/${locale}#converter`}>{content.convert} <ArrowRight size={15} /></Link></aside></div></article>
     <div className="seo-ad-band compact"><AdBanner adKey={AD_KEYS.compact} width={468} height={60} label={copy.ad} /></div>
     <section className="seo-faq"><div><span className="section-kicker">{content.questions}</span><h2>{content.questions}</h2></div><div className="seo-faq-list">{content.faqs.map((faq, index) => <details key={faq.question} open={index === 0}><summary><span>{String(index + 1).padStart(2, "0")}</span>{faq.question}</summary><p>{faq.answer}</p></details>)}</div></section>
     <section className="related-section"><span className="section-kicker">{content.related}</span><h2>{content.related}</h2><div><Link href={qualityPagePath(locale, otherPage)}><strong>{qualityContent[locale][otherPage].title}</strong><p>{qualityContent[locale][otherPage].description}</p><ArrowRight size={17} /></Link><Link href={platformPath(locale, "youtube")}><strong>YouTube Downloader</strong><p>{copy.metaDescription}</p><ArrowRight size={17} /></Link><Link href={`/${locale}#converter`}><strong>{content.convert}</strong><p>{content.selectable} · {content.verified}</p><ArrowRight size={17} /></Link></div></section>
