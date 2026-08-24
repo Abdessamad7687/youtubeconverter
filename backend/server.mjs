@@ -7,7 +7,7 @@ import { basename, extname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { isProxyMediaFailure, isTransportFailure, isYouTubeChallenge } from "./proxy-policy.mjs";
+import { isProxyMediaFailure, isTransportFailure, isYouTubeChallenge, orderedProxyRoutes } from "./proxy-policy.mjs";
 import { isThreadsUrl, resolveThreadsVideo } from "./threads-policy.mjs";
 
 const PORT = Number(process.env.PORT || 8788);
@@ -22,7 +22,7 @@ const YTDLP_PROXY = process.env.YTDLP_PROXY?.trim();
 const YTDLP_PROXIES = [...new Set([
   ...(process.env.YTDLP_PROXIES || "").split(/[\n,;]+/).map((proxy) => proxy.trim()).filter(Boolean),
   ...(YTDLP_PROXY ? [YTDLP_PROXY] : []),
-])].slice(0, 20);
+])].slice(0, 100);
 const YTDLP_COOKIES_FILE = process.env.YTDLP_COOKIES_FILE?.trim();
 const YTDLP_JS_RUNTIME = process.env.YTDLP_JS_RUNTIME?.trim() || "node";
 const YTDLP_EXTRACTOR_ARGS = process.env.YTDLP_EXTRACTOR_ARGS?.trim();
@@ -235,11 +235,7 @@ function withFormat(args, selector) {
 function orderedProxies(inputUrl) {
   if (!shouldUseProxy(inputUrl)) return [];
   if (!YTDLP_PROXIES.length) return [];
-  const now = Date.now();
-  const available = YTDLP_PROXIES.filter((proxy) => (proxyCooldowns.get(proxy) || 0) <= now);
-  if (!available.length) return [];
-  const start = proxyCursor++ % available.length;
-  return [...available.slice(start), ...available.slice(0, start)];
+  return orderedProxyRoutes(YTDLP_PROXIES, proxyCooldowns, Date.now(), proxyCursor++);
 }
 
 async function runYtDlp(args, inputUrl, { stopOnMediaFailure = false } = {}) {

@@ -22,7 +22,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import AdBanner, { AD_KEYS } from "./ad-banner";
 import { homeCopy, Locale, locales, localizedSlugs, platformIds, platformNames, platformPath, qualityPagePath } from "./i18n";
+import { openSmartLink } from "./smartlink";
 import { FormatMenu, PlatformMenu } from "./tool-navigation";
 
 export type Format = "mp3" | "mp4" | "m4a" | "wav" | "aac" | "flac" | "opus";
@@ -31,7 +33,6 @@ type MediaPreview = { title: string; author?: string; thumbnail?: string; source
 type DownloadResult = { url: string; filename: string; note?: string };
 
 const SAMPLE_URL = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
-const SMARTLINK_URL = "https://www.effectivecpmnetwork.com/ajqxrtk2?key=e88c6ebfc5c63d06d4e955cce6e4d950";
 const platformPlaceholders = [
   "https://tiktok.com/@creator/video/…",
   "https://instagram.com/reel/…",
@@ -87,41 +88,6 @@ const angleCopy: Record<Locale, { kicker: string; title: string; accent: string;
   pt: { kicker: "A diferença toTube", title: "Você escolhe a qualidade.", accent: "Nós verificamos o arquivo.", intro: "Sem falsas promessas de 4K ou extensões apenas renomeadas: o toTube informa os limites e verifica o arquivo antes do download.", cta: "Testar o conversor", cards: [{ title: "MP4 compatível", text: "Verificação de H.264, AAC e yuv420p para reprodução no celular, TV e computador." }, { title: "Áudio verificado", text: "O FFprobe confirma o codec esperado em MP3, M4A, WAV, AAC, FLAC e OPUS." }, { title: "Qualidade escolhida", text: "Vídeo até 1080p ou áudio comprimido de 128 a 320 kbps." }, { title: "Limites claros", text: "Links públicos, duração e qualidade máxima explicados sem prometer acesso privado." }] },
   de: { kicker: "Der toTube-Unterschied", title: "Du wählst die Qualität.", accent: "Wir prüfen die Datei.", intro: "Keine erfundenen 4K-Versprechen und keine umbenannten Endungen: toTube nennt Grenzen und prüft das Medium vor dem Download.", cta: "Konverter testen", cards: [{ title: "Kompatibles MP4", text: "Prüfung von H.264, AAC und yuv420p für zuverlässige Wiedergabe auf Handy, TV und Computer." }, { title: "Geprüftes Audio", text: "FFprobe bestätigt den erwarteten Codec in MP3, M4A, WAV, AAC, FLAC und OPUS." }, { title: "Wählbare Qualität", text: "Video bis 1080p oder komprimiertes Audio mit 128 bis 320 kbps." }, { title: "Klare Grenzen", text: "Öffentliche Links, Dauer und maximale Qualität werden ohne Versprechen zu privaten Medien erklärt." }] },
 };
-
-function AdBanner({ adKey, width, height, label }: { adKey: string; width: number; height: number; label: string }) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    const resize = () => setScale(Math.min(1, viewport.clientWidth / width));
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(viewport);
-    return () => observer.disconnect();
-  }, [width]);
-
-  const source = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=${width},initial-scale=1"><style>html,body{margin:0;padding:0;width:${width}px;height:${height}px;overflow:hidden;background:transparent}</style></head><body><script>atOptions=${JSON.stringify({ key: adKey, format: "iframe", height, width, params: {} })};</script><script src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script></body></html>`;
-
-  return (
-    <aside className="ad-unit" style={{ maxWidth: width }} aria-label={label}>
-      <span>{label}</span>
-      <div ref={viewportRef} className="ad-viewport" style={{ height: height * scale }}>
-        <iframe
-          title={`${label} ${width} × ${height}`}
-          srcDoc={source}
-          width={width}
-          height={height}
-          loading="lazy"
-          referrerPolicy="origin"
-          sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
-          style={{ transform: `scale(${scale})` }}
-        />
-      </div>
-    </aside>
-  );
-}
 
 function LanguageSwitcher({ locale }: { locale: Locale }) {
   return (
@@ -201,7 +167,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
       return;
     }
 
-    window.open(SMARTLINK_URL, "_blank", "noopener");
+    openSmartLink();
     setPhase("converting");
     setError("");
     setProgress(12);
@@ -292,7 +258,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
           <p className="hero-subtitle">{copy.subtitle}</p>
         </div>
 
-        <AdBanner adKey="5321f0adf5a727cf9500e1e0bce95ca9" width={728} height={90} label={copy.ad} />
+        <AdBanner adKey={AD_KEYS.leaderboard} width={728} height={90} label={copy.ad} />
 
         <div className="converter-shell" id="converter">
           <div className="converter-topline"><span><span className="status-dot" /> {copy.ready}</span><span>{copy.private} <LockKeyhole size={13} /></span></div>
@@ -386,7 +352,7 @@ export default function LocalizedHome({ locale }: { locale: Locale }) {
           </form>
         </div>
 
-        <AdBanner adKey="4ed5c4bd0900ef9380332764b589781a" width={468} height={60} label={copy.ad} />
+        <AdBanner adKey={AD_KEYS.compact} width={468} height={60} label={copy.ad} />
         <div className="trust-row"><span><ShieldCheck size={17} /> {copy.trust[0]}</span><span><Zap size={17} /> {copy.trust[1]}</span><span><LockKeyhole size={17} /> {copy.trust[2]}</span></div>
       </section>
 

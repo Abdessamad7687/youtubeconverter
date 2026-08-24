@@ -395,6 +395,11 @@ footer { background: #111514; color: white; padding: 70px clamp(20px, 7vw, 108px
 .seo-trust span { display: flex; align-items: center; gap: 6px; }
 .seo-trust svg { color: #328357; }
 .seo-inline-converter { width: min(900px, 100%); padding: 18px; border: 1px solid rgba(23,27,26,.22); border-radius: 16px; background: rgba(255,254,250,.94); box-shadow: 0 14px 35px rgba(23,27,26,.09); position: relative; z-index: 2; }
+.platform-tool-hero > .ad-unit { margin: 4px 0 24px; }
+.platform-tool-hero > .seo-inline-converter + .ad-unit { align-self: center; margin: 24px 0 0; }
+.seo-ad-band { padding: 28px 20px; border-bottom: 1px solid var(--line); background: #fffefa; }
+.seo-ad-band.compact { border-top: 1px solid var(--line); }
+.seo-ad-band .ad-unit { margin-top: 0; }
 .seo-inline-converter label { display: block; margin: 0 0 9px; font-size: 11px; font-weight: 760; }
 .seo-converter-row { display: grid; grid-template-columns: minmax(0, 1fr) 105px 170px; gap: 9px; }
 .seo-converter-input { min-width: 0; height: 52px; border: 1px solid #bfc1b9; border-radius: 10px; background: white; display: flex; align-items: center; gap: 10px; padding: 0 14px; }

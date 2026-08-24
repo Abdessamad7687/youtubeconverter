@@ -1,5 +1,6 @@
 import { ArrowRight, Check, FileAudio, FileVideo, Play, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
+import AdBanner, { AD_KEYS } from "./ad-banner";
 import { homeCopy, Locale, PlatformId, platformIds, platformNames, platformPath } from "./i18n";
 import { ToolFooter, ToolNavigation } from "./tool-navigation";
 import InlinePlatformConverter from "./inline-platform-converter";
@@ -167,7 +168,9 @@ export function LocalizedPlatformPage({ locale, platform }: { locale: Locale; pl
         <span className="section-kicker">{name} downloader</span>
         <h1>{heroTitle}<br /><em>{heroAccent}</em></h1>
         <p>{description}</p>
+        <AdBanner adKey={AD_KEYS.leaderboard} width={728} height={90} label={copy.ad} />
         <InlinePlatformConverter locale={locale} platform={platform} />
+        <AdBanner adKey={AD_KEYS.compact} width={468} height={60} label={copy.ad} />
         <div className="seo-trust"><span><Check size={15} /> {ui.free}</span><span><Check size={15} /> {ui.noSignup}</span><span><Check size={15} /> {ui.formats}</span></div>
       </section>
 

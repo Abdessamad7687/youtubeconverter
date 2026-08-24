@@ -14,3 +14,15 @@ export function isTransportFailure(error) {
 export function isProxyMediaFailure(error) {
   return /unable to download (?:video )?data:[^\n]*http error (?:403|429)|http error 429:|too many requests/i.test(errorDetails(error));
 }
+
+export function orderedProxyRoutes(proxies, cooldowns, now, cursor) {
+  if (!proxies.length) return [];
+  const available = proxies.filter((proxy) => (cooldowns.get(proxy) || 0) <= now);
+  if (!available.length) {
+    return [...proxies]
+      .sort((left, right) => (cooldowns.get(left) || 0) - (cooldowns.get(right) || 0))
+      .slice(0, 1);
+  }
+  const start = cursor % available.length;
+  return [...available.slice(start), ...available.slice(0, start)];
+}

@@ -3,11 +3,11 @@
 import { ArrowRight, Check, Download, Link2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Locale, PlatformId, platformNames } from "./i18n";
+import { openSmartLink } from "./smartlink";
 
 type Format = "mp3" | "mp4" | "m4a" | "wav" | "aac" | "flac" | "opus";
 type Result = { url: string; filename: string; note?: string };
 
-const SMARTLINK_URL = "https://www.effectivecpmnetwork.com/ajqxrtk2?key=e88c6ebfc5c63d06d4e955cce6e4d950";
 const formats: Format[] = ["mp4", "mp3", "m4a", "wav", "aac", "flac", "opus"];
 const placeholders: Record<PlatformId, string> = {
   youtube: "https://youtube.com/watch?v=…",
@@ -38,7 +38,7 @@ export default function InlinePlatformConverter({ locale, platform }: { locale: 
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (!url.trim() || busy) return;
-    window.open(SMARTLINK_URL, "_blank", "noopener");
+    openSmartLink();
     setBusy(true); setError(""); setResult(null);
     try {
       const response = await fetch("/api/convert", {

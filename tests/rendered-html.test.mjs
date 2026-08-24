@@ -99,6 +99,7 @@ for (const [pathname, lang, heading] of localizedQualityPages) {
     assert.match(html, /class="tool-navigation"/i);
     assert.match(html, /class="tool-footer"/i);
     assert.match(html, /"@type":"BreadcrumbList"/i);
+    assert.match(html, /ad-banner-[^"']+\.js/i);
   });
 }
 
@@ -162,6 +163,7 @@ for (const [pathname, lang, heading] of localizedPlatformPages) {
     assert.match(html, /class="tool-navigation"/i);
     assert.match(html, /class="tool-footer"/i);
     assert.match(html, /class="seo-inline-converter"/i);
+    assert.match(html, /ad-banner-[^"']+\.js/i);
   });
 }
 
